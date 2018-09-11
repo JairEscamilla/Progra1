@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <math.h> // Incluyo la libreria
-// Prototipoa de funciones
+// Prototipos de funciones
 void getCof(int*, int*, int*);
 void discriminante(int, int, int, int*);
 void calcula(int, int, int);
