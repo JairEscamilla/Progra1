@@ -9,7 +9,6 @@ int main(void){
   float area, lado1, lado2;
   float radio;
   int opcion;
-  int resp = 0;
   do {
     MostrarMenu();
     scanf("%d", &opcion);
@@ -34,13 +33,14 @@ int main(void){
         scanf("%f %f", &lado1, &lado2);
         Triangulo(lado1, lado2, &area);
         break;
+      case 5:
+        printf("\nHasta luego\n");
+        break;
       default:
         printf("Ingresa una opcion valida\n");
     }
     printf("El resultado es %.2f\n", area);
-    printf("Ingresa 0 si quieres realizar otra operacion, de lo contrario presiona otra tecla--> ");
-    scanf("%d", &resp);
-  } while(resp == 0);
+  } while(opcion != 5);
 }
 
 void MostrarMenu(){
@@ -49,6 +49,7 @@ void MostrarMenu(){
   printf("2.- Cuadrado\n");
   printf("3.- Rectangulo\n");
   printf("4.- Triangulo\n");
+  printf("5.- Salir\n");
   printf("--> ");
 }
 
