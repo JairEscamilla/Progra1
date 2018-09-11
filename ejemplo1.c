@@ -39,7 +39,6 @@ int main(void){
       default:
         printf("Ingresa una opcion valida\n");
     }
-    printf("El resultado es %.2f\n", area);
   } while(opcion != 5);
 }
 
@@ -55,13 +54,17 @@ void MostrarMenu(){
 
 void Circulo(float radio, float *area){
   *area = Pi*radio*radio;
+  printf("El resultado es %.2f\n", *area);
 }
 void Cuadrado(float lado, float *area){
   *area = lado*lado;
+  printf("El resultado es %.2f\n", *area);
 }
 void Rectangulo(float base, float altura, float *area){
   *area = base*altura;
+  printf("El resultado es %.2f\n", *area);
 }
 void Triangulo(float base, float altura, float *area){
   *area = (base*altura)/2;
+  printf("El resultado es %.2f\n", *area);
 }
