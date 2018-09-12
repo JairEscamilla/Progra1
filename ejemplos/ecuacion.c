@@ -16,8 +16,8 @@ float main(void){
     }else{
       printf("La ecuacion no tiene solucion\n");
     }
+    __fpurge(stdin);
     printf("Desea hacer otra operacion? ");
-    scanf("%c", &r);
     scanf("%c", &r);
   } while(r == 's' || r == 'S');
 }
