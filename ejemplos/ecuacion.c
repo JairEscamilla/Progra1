@@ -1,12 +1,12 @@
 #include <stdio.h>
 #include <math.h> // Incluyo la libreria
 // Prototipos de funciones
-void getCof(int*, int*, int*);
-void discriminante(int, int, int, int*);
-void calcula(int, int, int);
+void getCof(float*, float*, float*);
+void discriminante(float, float, float, float*);
+void calcula(float, float, float);
 // Funcion principal
-int main(void){
-  int a, b, c, d;
+float main(void){
+  float a, b, c, d;
   char r;
   do {
     getCof(&a, &b, &c);
@@ -21,14 +21,15 @@ int main(void){
     scanf("%c", &r);
   } while(r == 's' || r == 'S');
 }
-void getCof(int* a, int* b, int*c){
+void getCof(float* a, float* b, float*c){
   printf("Ingresar coeficientes: ");
-  scanf("%d %d %d", a, b, c);
+  scanf("%f %f %f", a, b, c);
 }
-void discriminante(int a, int b, int c, int* d){
+void discriminante(float a, float b, float c, float* d){
   *d = (b*b) - (4*a*c);
+  float x = (b*b) - (4*a*c);
 }
-void calcula(int a, int b, int d){
+void calcula(float a, float b, float d){
   float x1 = 0.0, x2 = 0.0;
   x1 = (float)(-(b) + sqrt(d))/2*a;
   x2 = (float)(-(b) - sqrt(d))/2*a;
