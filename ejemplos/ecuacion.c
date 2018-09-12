@@ -31,8 +31,8 @@ void discriminante(float a, float b, float c, float* d){
 }
 void calcula(float a, float b, float d){
   float x1 = 0.0, x2 = 0.0;
-  x1 = (float)(-(b) + sqrt(d))/2*a;
-  x2 = (float)(-(b) - sqrt(d))/2*a;
+  x1 = (float)((-1)*(b) + sqrt(d))/(2*a);
+  x2 = (float)((-1)*(b) - sqrt(d))/(2*a);
   printf("Los reultados son: \n");
   printf("x1 = %.2f\nx2 = %.2f\n", x1, x2);
 }
