@@ -9,7 +9,7 @@ int main(void){
   getW(&W);
   toKg(W, &Kg);
   toG(Kg, &G);
-  printf("Kilogramos: %f\n. Gramos: %f\n", Kg, G);
+  printf("Kilogramos: %f\nGramos: %f\n", Kg, G);
 }
 
 // Desarrollando las funciones
@@ -21,6 +21,12 @@ void getW(float* W){
 void toKg(float W, float* Kg) {
   // 1lb ->  0.45359 kg
   // nlb -> x Kg
+  *Kg = W*0.45359;
+}
+void toG(float Kg, float* G){
+  // 1kg -> 1000g
+  // nKg -> x g
+  *G =  (Kg * 1000);
 }
 
 /* Fundamentos -> Lab -> Practica1 (Aquí van a estar todos los ejercicios )
