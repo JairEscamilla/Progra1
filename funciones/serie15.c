@@ -12,6 +12,7 @@ int main(void){
   printf("El resultado de la potencia es %d\n", Res);
 }
 
+// Desarrollando las funciones
 void read(int* Num, int* Potencia){
   printf("Ingresar numero: ");
   scanf("%d", Num);
