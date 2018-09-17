@@ -5,19 +5,17 @@ void compare(char);
 // Funcion principal
 int main(void){
   char Letter = 0;
-  printf("Ingresar letra: ");
-  getLetter(&Letter);
-  while (!(Letter >= 65 && Letter <= 90)) {
+  do {
     getLetter(&Letter);
     compare(Letter);
-  }
+  } while(!(Letter >= 65 && Letter <= 90) && !(Letter >= 97 && Letter <= 122));
 }
-
 // Desarrollando las funciones
 void getLetter(char* Letter){
-  scanf("%c", Letter);
+    __fpurge(stdin);
+    printf("Ingresar letra: ");
+    scanf("%c", Letter);
 }
-
 void compare(char Letter){
   if (Letter >= 65 && Letter <= 90)
     printf("La letra introducida es mayuscula\n");
