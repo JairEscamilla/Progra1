@@ -11,7 +11,6 @@ int main(void){
   long Fecha;
   int Dia, Mes, Anio;
   int Bisiesto = 0;
-  long Manana;
   getDate(&Fecha);
   getDay(Fecha, &Dia);
   getMonth(Fecha, &Mes);
@@ -50,7 +49,7 @@ void tomorrow(int* Dia, int* Mes, int* Anio, int* Bisiesto){
     *Dia = 1;
     *Mes = *Mes + 1;
   }else{
-    if (*Dia == 31 && *Mes %2 != 0 || *Mes == 8) {
+    if (*Dia == 31 && (*Mes %2 != 0 || *Mes == 8)) {
       *Dia = 1;
       *Mes = *Mes + 1;
     }else{
