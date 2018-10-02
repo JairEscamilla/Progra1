@@ -19,6 +19,7 @@ int main(){
       }
     }
   }
+
   printf("Los valores ordenados son: ");
   // Desplegamos el array ordenado
   for(int i = 0; i < Cant; i++){
