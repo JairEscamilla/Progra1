@@ -9,7 +9,7 @@ int main(void){
   do{
     printf("Ingresar cantidad de numeros: ");
     scanf("%d", &Cant);
-  }while(0< Cant > 100);
+  }while(Cant < 0 || Cant > 100);
   for(int i = 0; i < Cant; i++){
     printf("Ingresar valor %d: ", i+1);
     scanf("%d", &Array[i]);
