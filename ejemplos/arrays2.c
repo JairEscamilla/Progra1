@@ -5,7 +5,7 @@ int main(){
   do{
     printf("Ingrese la cantidad de valores: ");
     scanf("%d", &Cant);
-  }while(Cant > 100 || cant < 1)
+  }while(Cant > 100 || cant < 1);
   for(int i = 0; i < Cant; i++){
     printf("Ingresar valor %d: ", i+1);
     scanf("%d", &Values[i]);
