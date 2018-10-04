@@ -16,7 +16,7 @@ int main(void){
     ordenar(Array, i);
   }
   desplegar(Array, Cant);
-}
+}  
 
 // Desarrollando las funciones
 void ordenar(int Array[], int i){
