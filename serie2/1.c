@@ -33,10 +33,12 @@ void despliega(int Cuadrados[]){
   // Dibujando el cuerpo de la tabla
   for(int i = 0; i < 100; i++){
     printf("*%10d          *%10d          *\n", i+1, Cuadrados[i]);
+    for(int i = 0; i< 43; i++){
+      printf("*");
+    }
+    printf("\n");
   }
-  for(int i = 0; i< 43; i++){
-    printf("*");
-  }
+
   // Fin del cuerpo de la tabla
   printf("\n");
 }
