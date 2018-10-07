@@ -10,13 +10,14 @@ int main(void){
     printf("Ingresar cantidad de numeros: ");
     scanf("%d", &Cant);
   }while(Cant < 0 || Cant > 100);
+
   for(int i = 0; i < Cant; i++){
     printf("Ingresar valor %d: ", i+1);
     scanf("%d", &Array[i]);
     ordenar(Array, i);
   }
   desplegar(Array, Cant);
-}  
+}
 
 // Desarrollando las funciones
 void ordenar(int Array[], int i){
