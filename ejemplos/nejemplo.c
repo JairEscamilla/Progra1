@@ -4,7 +4,6 @@ void voltear(char[], char[]);
 int main(void){
   char Fr[200];
   char Volt[200];
-  char Copy[200];
   printf("Ingresar frase: ");
   gets(Fr);
   voltear(Fr, Volt);
