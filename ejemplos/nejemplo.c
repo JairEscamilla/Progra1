@@ -8,8 +8,7 @@ int main(void){
   printf("Ingresar frase: ");
   gets(Fr);
   voltear(Fr, Volt);
-  strcpy(Copy, Volt);
-  puts(Copy);
+  puts(Volt);
 }
 void voltear(char Frase[], char Volt[]){
   int Cont = 0;
