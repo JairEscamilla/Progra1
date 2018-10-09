@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+void Imprimed(char*);
 int main(void){
   char Frase[200];
   printf("Ingresar frase: ");
@@ -9,6 +10,14 @@ int main(void){
   while(Frase[i] != '\0'){
     printf("%c", Frase[i]);
     i++;
+  }
+  printf("\n");
+  Imprimed(Frase);
+}
+void Imprimed(char* Frase){
+  while (*Frase != '\0') {
+    printf("%c", *Frase);
+    Frase++;
   }
   printf("\n");
 }
