@@ -1,77 +1,55 @@
 #include <stdio.h>
-// Prototipos de las funciones
+#include <string.h>
+// Prototipos de fuciones
 void getLetter(char[], char[]);
-void iniciarCuenta(int[]);
-void cuenta(char[], char[], int[]);
-void despliega(char[], int[]);
 // Funcion principal
 int main(void){
   char Frase[100];
   char Letras[100];
-  int Conteo[100];
-  printf("Ingresar una frase: ");
-  scanf("%s", Frase);
-  for(int i = 0; i<= 100; i++){
-    Letras[i] = '*';
-  }
+  printf("Ingresar frase: ");
+  gets(Frase);
   getLetter(Frase, Letras);
-  //iniciarCuenta(Conteo);
-  //cuenta(Frase, Letras, Conteo);
-  //despliega(Letras, Conteo);
 }
 
-// Desarrollando las funciones
 void getLetter(char Frase[], char Letras[]){
-  int Flag = 0;
-  for(int i = 0; Frase[i] != '\0'; i++){
+  int i = 0;
+  int Cont = 0;
+  int Flag;
+  // Dibujo el encabezado
+  for(int i = 0; i< 43; i++){
+    printf("*");
+  }
+  printf("\n");
+  printf("*     Letra     * Cantidad de apariciones *\n");
+  for(int i = 0; i< 43; i++){
+    printf("*");
+  }
+  printf("\n");
+  // Fin del dibujo del encabezado
+
+
+  while (Frase [i] != '\0') {
+    Cont = 0;
     Flag = 0;
-      for(int j = 0; j <= i; j++){
-          if (Letras[j] == Frase[i]) {
-            Flag = 1;
-          }
+    for(int k = 0; Letras[k] != '\0'; k++){
+      if (Letras[k] == Frase[i]) {
+        Flag = 1;
       }
-      if (Flag == 0) {
-        Letras[i] = Frase[i];
-      }
-  }
-  int Cuenta = 0;
-  char Nueva[100];
-  for(int i = 0; i <= 100; i++){
-    if (Letras[i] != '*') {
-      __fpurge(stdin);
-      Nueva[Cuenta] = Letras[i];
-      Cuenta++;
     }
-  }
-  for(int i = 0; Nueva[i] != '\0'; i++){
-    printf("%d - %c\n", Nueva[i], Nueva[i]);
-  }
-}
-
-void iniciarCuenta(int Cuenta[]){
-  for(int i = 0; i <= 100; i++){
-    Cuenta[i] = 0;
-  }
-}
-void cuenta(char Frase[], char Letras[], int Conteo[]){
-  int i = 0;
-  int j = 0;
-  while (Letras[i] != '\0') {
-    while (Frase[j] != '\0') {
-      if (Letras[i] == Frase[i]) {
-        Conteo[i]++;
+    for(int j = 0; Frase[j] != '\0'; j++){
+      if (Flag == 0 && Frase[i] == Frase[j]) {
+        Cont++;
       }
-      j++;
     }
+    if (Cont > 0) {
+      printf("*%8c       *%10d veces         *\n", Frase[i], Cont);
+      for(int i = 0; i < 43; i++){
+        printf("*");
+      }
+      printf("\n");
+    }
+    Letras[i] = Frase[i];
+    Letras[i+1] = '\0';
     i++;
-  }
-}
-
-void despliega(char Frase[], int Cuenta[]){
-  int i = 0;
-  printf("Estamos dentro\n");
-  printf("%c", Frase[0]);
-  while (Frase[i] != '\0') {
-    printf("%c aparece %d veces", Frase[i], Cuenta[i]);
   }
 }
