@@ -39,7 +39,7 @@ int main(void){
     }
   } while(Flag == 1);
   calculo(d, m, a, dd, mm, aa, &Dt);
-  printf("Los dias entre una fecha y otra son: %d\n", Dt);
+  printf("Los dias entre una fecha y otra son: %d\n dias", Dt);
 }
 
 void valida(long Fecha, int* Flag, int dias[], int* d, int* m, int*a){
