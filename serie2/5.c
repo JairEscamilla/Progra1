@@ -3,7 +3,7 @@
 #include <string.h>
 // Prototipos de funciones
 void Conversion(char[], char[]);
-void deleteEspace(char[], char[]);
+void deleteEspace(char[]);
 void invertir(char[], char[]);
 // Funcion principal
 int main(void){
@@ -13,7 +13,7 @@ int main(void){
   printf("Ingresar una frase: ");
   gets(Frase);
   Conversion(Frase, Frase2);
-  deleteEspace(Frase2, Frase3);
+  deleteEspace(Frase2);
   invertir(Frase2, Frase3);
 
   if (strcmp(Frase2, Frase3) == 0)
@@ -36,7 +36,7 @@ void Conversion(char Frase[], char Frase2[]){ // Convierte la cadena a mayuscula
 }
 
 // Quita los espacios de la cadena
-void deleteEspace(char Frase2[], char Frase3[]){
+void deleteEspace(char Frase2[]){
   int i;
   int j;
   for(i = 0; Frase2[i] != '\0'; i++){
