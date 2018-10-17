@@ -27,6 +27,8 @@ int main(void){
       case 3:
         buscarAlumnos(Calificaciones, Nombres, Cuenta);
         break;
+      default:
+        printf("Debes ingresar una opcion valida!");
     }
     printf("Desea realizar otra operacion? (1.- Si / 2.- No): ");
     scanf("%d", &resp);
