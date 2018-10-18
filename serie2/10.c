@@ -57,4 +57,7 @@ void calculo(int d, int m, int a, int dd, int mm, int aa, int*dt){
   int aux1 = (aa*365)+(mm-1)*30+dd;
   int aux2 = (a*365)+(m-1)*30+d;
   *dt = aux1 - aux2;
+  if (m == 2) {
+    *dt = *dt -2;
+  }
 }
