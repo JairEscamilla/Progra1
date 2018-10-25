@@ -10,6 +10,7 @@ int main(void){
 }
 
 int factorial(int n){
+  printf("Entrada a factorial %d\n", n);
   if (n > 1) {
     return n*factorial(n-1);
   }else{
