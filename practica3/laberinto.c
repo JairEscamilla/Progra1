@@ -9,8 +9,15 @@
 
 // FUNCION PRINCIPAL
 int main(int argc, char const *argv[]) {
-  printf("Archivo: %s\n", argv[1]);
-  printf("Pasos: %s\n", argv[2]);
+  char Archivo[50];
+  char Valida[7] = {'-', 'p', 'a', 's', 'o', 's', '\0'};
+  if ((argc > 3) || (strcmp(argv[1], Valida) == 0)) {
+    printf("Error, opcion incorrecta\n");
+  }else{
+    strcpy(Archivo, argv[1]);
+    printf("Archivo: %s", Archivo);
+
+  }
   return 0;
 }
 // FIN DE FUNCION PRINCIPAL
