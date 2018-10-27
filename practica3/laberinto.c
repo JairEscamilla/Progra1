@@ -9,7 +9,8 @@
 
 // FUNCION PRINCIPAL
 int main(int argc, char const *argv[]) {
-
+  printf("Archivo: %s\n", argv[1]);
+  printf("Pasos: %s\n", argv[2]);
   return 0;
 }
 // FIN DE FUNCION PRINCIPAL
