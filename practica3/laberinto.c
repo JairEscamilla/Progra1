@@ -22,9 +22,9 @@ int main(int argc, char *argv[]) {
     }else{
       strcpy(Archivo, argv[1]);
       leerArchivo(Archivo, Laberinto, &y); // Leemos el archivo
-      imprimirLaberinto(Laberinto, y);
+      imprimirLaberinto(Laberinto, y); // Imprimimos el laberinto
       printf("Presione enter para continuar... ");
-      getchar();
+      getchar(); // Pausa para visualizar el laberinto
       printf("Continuacion del problema\n");
     }
   }
