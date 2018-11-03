@@ -7,28 +7,34 @@ void leerArchivo(char Archivo[]);
 // FIN DE PROTOTIPOS DE FUNCIONES
 
 // FUNCION PRINCIPAL
-int main(int argc, char const *argv[]) {
+int main(int argc, char *argv[]) {
   // Declaracion de variables
-  char Archivo[50];
-  char Valida[7] = {'-', 'p', 'a', 's', 'o', 's', '\0'};
+  char Archivo[50], Validacion[] = "-p";
   // Fin de declarcion de variables
-  if ((argc > 3) || (strcmp(argv[1], Valida) == 0)) { // Validamos los parametros
+  if((argc < 2 || argc > 3) || (strcmp(argv[1], Validacion) == 0)){
     printf("Error, opcion incorrecta\n");
   }else{
-    strcpy(Archivo, argv[1]); // Obtenemos el nombre del Archivo
+    if(argc == 3 && strcmp(argv[2], Validacion) != 0){
+      printf("Error, opcion incorrecta\n");
+    }else{
+      strcpy(Archivo, argv[1]);
+      leerArchivo(Archivo);
+    }
   }
-  leerArchivo(Archivo);
+
+
   return 0;
 }
 // FIN DE FUNCION PRINCIPAL
 
 // DESARROLLO DE LAS FUNCIONES
-void leerArchivo (char Archivo[]) {
-  FILE* arch = fopen(Archivo, "r+b");
+void leerArchivo (char Archivo[]) { // Funcion que lee el archivo
+  FILE* Arch = fopen(Archivo, "r+b");
   char c;
-  while (!feof(arch)) {
-    fread(&c, sizeof(char), 1, arch);
+  while (!feof(Arch)) {
+    fread(&c, sizeof(char), 1, Arch);
     printf("%c", c);
   }
+  fclose(Arch);
 }
 // FIN DE DESARROLLO DE FUNCIONES
