@@ -53,8 +53,7 @@ void leerArchivo (char Archivo[], char Laberinto[30][30], int* y) { // Funcion q
   *y = j;
   fclose(Arch);
 }
-
-void imprimirLaberinto(char Laberinto[30][30], int y){
+void imprimirLaberinto(char Laberinto[30][30], int y){ // Funcion que imprime en pantalla el laberinto
   int j = 0;
   for(int i = 0; i < y-1; i++){
     j = 0;
