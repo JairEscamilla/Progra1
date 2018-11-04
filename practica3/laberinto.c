@@ -1,6 +1,7 @@
 //  Incluimos las librerias
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
 // PROTOTIPOS DE FUNCIONES
 void leerArchivo(char Archivo[], char Laberinto[30][30], int* y);
@@ -29,7 +30,8 @@ int main(int argc, char *argv[]) {
       getchar(); // Pausa para visualizar el laberinto
       printf("Continuacion del problema\n");
       analizarLaberinto(Laberinto, &Entradax, &Entraday, y);
-      
+      system("clear");
+      printf("Continuamos con el desarrollo del laberinto\n");
     }
   }
 
