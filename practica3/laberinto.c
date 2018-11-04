@@ -7,6 +7,7 @@
 void leerArchivo(char Archivo[], char Laberinto[30][30], int* y);
 void imprimirLaberinto(char Laberinto[30][30], int y);
 void analizarLaberinto(char Laberinto[30][30], int* x, int* y, int cy);
+void resolverLaberinto(char Laberinto[30][30], int x, int y);
 // FIN DE PROTOTIPOS DE FUNCIONES
 
 // FUNCION PRINCIPAL
@@ -32,6 +33,7 @@ int main(int argc, char *argv[]) {
       analizarLaberinto(Laberinto, &Entradax, &Entraday, y);
       system("clear");
       printf("Continuamos con el desarrollo del laberinto\n");
+      resolverLaberinto(Laberinto, Entradax, Entraday);
     }
   }
 
@@ -70,7 +72,7 @@ void imprimirLaberinto(char Laberinto[30][30], int y){ // Funcion que imprime en
     printf("\n");
   }
 }
-void analizarLaberinto(char Laberinto[30][30], int* x, int* y, int cy){
+void analizarLaberinto(char Laberinto[30][30], int* x, int* y, int cy){ // Funcion que obtiene las coordenadas de la entrada
   int j = 0;
   for(int i = 0; i < cy-1; i++){
     j = 0;
@@ -82,5 +84,15 @@ void analizarLaberinto(char Laberinto[30][30], int* x, int* y, int cy){
       }
     }
   }
-} // Funcion que obtiene las coordenadas de la entrada
+}
+void resolverLaberinto(char Laberinto[30][30], int x, int y){
+  if (Laberinto[x][y] == 'S') {
+    if (Laberinto[x][y+1] != '*') {
+      Laberinto[x][y+1] = '.';
+      resolverLaberinto(Laberinto, x, y+1);
+    }
+  }else{
+    printf("Laberinto resuelto\n");
+  }
+}
 // FIN DE DESARROLLO DE FUNCIONES
