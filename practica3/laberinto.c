@@ -7,7 +7,7 @@
 void leerArchivo(char Archivo[], char Laberinto[30][30], int* y);
 void imprimirLaberinto(char Laberinto[30][30], int y);
 void analizarLaberinto(char Laberinto[30][30], int* x, int* y, int cy);
-void resolverLaberinto(char Laberinto[30][30], int x, int y);
+void resolverLaberinto(char Laberinto[30][30], int x, int y, int Cy, int* Counter);
 // FIN DE PROTOTIPOS DE FUNCIONES
 
 // FUNCION PRINCIPAL
@@ -17,6 +17,7 @@ int main(int argc, char *argv[]) {
   char Laberinto[30][30];
   int y;
   int Entradax = 0, Entraday = 0;
+  int contador = 0;
   // Fin de declarcion de variables
   if((argc < 2 || argc > 3) || (strcmp(argv[1], Validacion) == 0)){ // Validamos la cantidad de parametros y formato
     printf("Error, opcion incorrecta\n");
@@ -33,7 +34,8 @@ int main(int argc, char *argv[]) {
       analizarLaberinto(Laberinto, &Entradax, &Entraday, y);
       system("clear");
       printf("Continuamos con el desarrollo del laberinto\n");
-      resolverLaberinto(Laberinto, Entradax, Entraday);
+      resolverLaberinto(Laberinto, Entradax, Entraday, y, &contador);
+      printf("Contador %d\n", contador);
     }
   }
 
@@ -62,6 +64,7 @@ void leerArchivo (char Archivo[], char Laberinto[30][30], int* y) { // Funcion q
   fclose(Arch);
 }
 void imprimirLaberinto(char Laberinto[30][30], int y){ // Funcion que imprime en pantalla el laberinto
+  system("clear");
   int j = 0;
   for(int i = 0; i < y-1; i++){
     j = 0;
@@ -85,14 +88,17 @@ void analizarLaberinto(char Laberinto[30][30], int* x, int* y, int cy){ // Funci
     }
   }
 }
-void resolverLaberinto(char Laberinto[30][30], int x, int y){
-  if (Laberinto[x][y] == 'S') {
+void resolverLaberinto(char Laberinto[30][30], int x, int y, int Cy, int* Counter){
+
+  if (Laberinto[x][y] != 'S') {
     if (Laberinto[x][y+1] != '*') {
       Laberinto[x][y+1] = '.';
-      resolverLaberinto(Laberinto, x, y+1);
+      (*Counter)++;
+      imprimirLaberinto(Laberinto, Cy);
+      getchar();
+      resolverLaberinto(Laberinto, x, y+1, Cy, Counter);
     }
-  }else{
-    printf("Laberinto resuelto\n");
   }
+
 }
 // FIN DE DESARROLLO DE FUNCIONES
