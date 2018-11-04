@@ -5,6 +5,7 @@
 // PROTOTIPOS DE FUNCIONES
 void leerArchivo(char Archivo[], char Laberinto[30][30], int* y);
 void imprimirLaberinto(char Laberinto[30][30], int y);
+void analizarLaberinto(char Laberinto[30][30], int* x, int* y, int cy);
 // FIN DE PROTOTIPOS DE FUNCIONES
 
 // FUNCION PRINCIPAL
@@ -13,6 +14,7 @@ int main(int argc, char *argv[]) {
   char Archivo[50], Validacion[] = "-p";
   char Laberinto[30][30];
   int y;
+  int Entradax = 0, Entraday = 0;
   // Fin de declarcion de variables
   if((argc < 2 || argc > 3) || (strcmp(argv[1], Validacion) == 0)){ // Validamos la cantidad de parametros y formato
     printf("Error, opcion incorrecta\n");
@@ -26,6 +28,8 @@ int main(int argc, char *argv[]) {
       printf("Presione enter para continuar... ");
       getchar(); // Pausa para visualizar el laberinto
       printf("Continuacion del problema\n");
+      analizarLaberinto(Laberinto, &Entradax, &Entraday, y);
+      
     }
   }
 
@@ -64,4 +68,17 @@ void imprimirLaberinto(char Laberinto[30][30], int y){ // Funcion que imprime en
     printf("\n");
   }
 }
+void analizarLaberinto(char Laberinto[30][30], int* x, int* y, int cy){
+  int j = 0;
+  for(int i = 0; i < cy-1; i++){
+    j = 0;
+    while (Laberinto[i][j] != '\n') {
+      j++;
+      if (Laberinto[i][j] == 'E') {
+        *x = i;
+        *y = j;
+      }
+    }
+  }
+} // Funcion que obtiene las coordenadas de la entrada
 // FIN DE DESARROLLO DE FUNCIONES
