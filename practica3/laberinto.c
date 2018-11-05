@@ -35,7 +35,7 @@ int main(int argc, char *argv[]) {
       system("clear");
       printf("Continuamos con el desarrollo del laberinto\n");
       resolverLaberinto(Laberinto, Entradax, Entraday, y, &contador);
-      printf("Contador %d\n", contador);
+      printf("Se encontraron %d caminos de salida\n", contador);
     }
   }
 
@@ -95,16 +95,20 @@ void resolverLaberinto(char Laberinto[30][30], int x, int y, int Cy, int* Counte
     system("sleep 0.5");
     if (Laberinto[x][y+1] != '*' && Laberinto[x][y+1] != 'S') {
       Laberinto[x][y+1] = '.';
-      (*Counter)++;
       resolverLaberinto(Laberinto, x, y+1, Cy, Counter);
     }
-    if (Laberinto[x-1][y] != '*' && Laberinto[x-1][y] != 'S') {
+    if (Laberinto[x-1][y] != '*' && Laberinto[x-1][y] != 'S' && Laberinto[x-1][y] != '.' && Laberinto[x-1][y] != 'E') {
       Laberinto[x-1][y] = '.';
-      (*Counter)++;
       resolverLaberinto(Laberinto, x-1, y, Cy, Counter);
+    }
+    if (Laberinto[x+1][y] != '*' && Laberinto[x+1][y] != 'S' && Laberinto[x+1][y] != '.' && Laberinto[x+1][y] != 'E') {
+      Laberinto[x+1][y] = '.';
+      resolverLaberinto(Laberinto, x+1, y, Cy, Counter);
     }
     if(Laberinto[x][y] != 'E')
       Laberinto[x][y] = ' ';
+    if(Laberinto[x+1][y] == 'S' || Laberinto[x][y+1] == 'S')
+      (*Counter)++;
     imprimirLaberinto(Laberinto, Cy);
     system("sleep 0.5");
   }
