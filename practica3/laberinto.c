@@ -93,7 +93,7 @@ void resolverLaberinto(char Laberinto[30][30], int x, int y, int Cy, int* Counte
   if (Laberinto[x][y] != 'S') {
     imprimirLaberinto(Laberinto, Cy);
     system("sleep 0.5");
-    if (Laberinto[x][y+1] != '*' && Laberinto[x][y+1] != 'S') {
+    if (Laberinto[x][y+1] != '*' && Laberinto[x][y+1] != 'S' && Laberinto[x][y+1] != '.' && Laberinto[x][y+1] != 'E') {
       Laberinto[x][y+1] = '.';
       resolverLaberinto(Laberinto, x, y+1, Cy, Counter);
     }
@@ -104,6 +104,10 @@ void resolverLaberinto(char Laberinto[30][30], int x, int y, int Cy, int* Counte
     if (Laberinto[x+1][y] != '*' && Laberinto[x+1][y] != 'S' && Laberinto[x+1][y] != '.' && Laberinto[x+1][y] != 'E') {
       Laberinto[x+1][y] = '.';
       resolverLaberinto(Laberinto, x+1, y, Cy, Counter);
+    }
+    if (Laberinto[x][y-1] != '*' && Laberinto[x][y-1] != 'S' && Laberinto[x][y-1] != '.' && Laberinto[x][y-1] != 'E') {
+      Laberinto[x][y-1] = '.';
+      resolverLaberinto(Laberinto, x, y-1, Cy, Counter);
     }
     if(Laberinto[x][y] != 'E')
       Laberinto[x][y] = ' ';
