@@ -98,6 +98,15 @@ void resolverLaberinto(char Laberinto[30][30], int x, int y, int Cy, int* Counte
       (*Counter)++;
       resolverLaberinto(Laberinto, x, y+1, Cy, Counter);
     }
+
+    if (Laberinto[x-1][y] != '*' && Laberinto[x-1][y] != 'S') {
+      Laberinto[x-1][y] = '.';
+      (*Counter)++;
+      resolverLaberinto(Laberinto, x-1, y, Cy, Counter);
+    }
+    
+
+
     if(Laberinto[x][y] != 'E')
       Laberinto[x][y] = ' ';
     imprimirLaberinto(Laberinto, Cy);
