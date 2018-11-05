@@ -89,7 +89,7 @@ void analizarLaberinto(char Laberinto[30][30], int* x, int* y, int cy){ // Funci
 void resolverLaberinto(char Laberinto[30][30], int x, int y, int Cy, int* Counter){ // Funcion que resuelve el laberinto
   if (Laberinto[x][y] != 'S') { // Verificamos que no nos encontremos en la salida
     imprimirLaberinto(Laberinto, Cy); // Imprimimos el laberinto
-    system("sleep 0.5"); // Hacemos una pausa de 5 milisegundos
+    system("sleep 0.1"); // Hacemos una pausa de 5 milisegundos
     if (Laberinto[x][y+1] != '*' && Laberinto[x][y+1] != 'S' && Laberinto[x][y+1] != '.' && Laberinto[x][y+1] != 'E') { // Condicion para que se mueva a la derecha
       Laberinto[x][y+1] = '.';
       resolverLaberinto(Laberinto, x, y+1, Cy, Counter);
@@ -111,7 +111,7 @@ void resolverLaberinto(char Laberinto[30][30], int x, int y, int Cy, int* Counte
     if(Laberinto[x+1][y] == 'S' || Laberinto[x][y+1] == 'S') // Contamos las veces que encontramos la salida
       (*Counter)++;
     imprimirLaberinto(Laberinto, Cy); // Imprimimos el laberinto
-    system("sleep 0.5"); // Pausamos durante 5 milisegundos
+    system("sleep 0.1"); // Pausamos durante 5 milisegundos
   }
 } // funcion que resuelve el laberinto
 // FIN DE DESARROLLO DE FUNCIONES
