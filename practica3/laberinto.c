@@ -91,13 +91,17 @@ void analizarLaberinto(char Laberinto[30][30], int* x, int* y, int cy){ // Funci
 void resolverLaberinto(char Laberinto[30][30], int x, int y, int Cy, int* Counter){
 
   if (Laberinto[x][y] != 'S') {
+    imprimirLaberinto(Laberinto, Cy);
+    system("sleep 0.5");
     if (Laberinto[x][y+1] != '*' && Laberinto[x][y+1] != 'S') {
       Laberinto[x][y+1] = '.';
       (*Counter)++;
-      imprimirLaberinto(Laberinto, Cy);
-      system("sleep 0.5");
       resolverLaberinto(Laberinto, x, y+1, Cy, Counter);
     }
+    if(Laberinto[x][y] != 'E')
+      Laberinto[x][y] = ' ';
+    imprimirLaberinto(Laberinto, Cy);
+    system("sleep 0.5");
   }
 
 } // funcion que resuelve el laberinto
