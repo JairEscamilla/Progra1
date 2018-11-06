@@ -108,7 +108,7 @@ void resolverLaberinto(char Laberinto[30][30], int x, int y, int Cy, int* Counte
   if (Laberinto[x][y] != 'S') { // Verificamos que no nos encontremos en la salida
     imprimirLaberinto(Laberinto, Cy); // Imprimimos el laberinto
     system("sleep 0.1"); // Hacemos una pausa de 5 milisegundos
-    if(Laberinto[x+1][y] == 'S' || Laberinto[x][y+1] == 'S'){ // Contamos las veces que encontramos la salida
+    if(Laberinto[x+1][y] == 'S' || Laberinto[x][y+1] == 'S' || Laberinto[x-1][y] == 'S' || Laberinto[x][y-1] == 'S'){ // Contamos las veces que encontramos la salida
       (*Counter)++;
       if(*CuentaPasos < *Min || *Counter == 1){
         *Min = *CuentaPasos;
