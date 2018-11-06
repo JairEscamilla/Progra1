@@ -110,8 +110,6 @@ void resolverLaberinto(char Laberinto[30][30], int x, int y, int Cy, int* Counte
     system("sleep 0.1"); // Hacemos una pausa de 5 milisegundos
     if(Laberinto[x+1][y] == 'S' || Laberinto[x][y+1] == 'S'){ // Contamos las veces que encontramos la salida
       (*Counter)++;
-      if(*Counter == 1)
-        *Min = *CuentaPasos;
       if(*CuentaPasos < *Min || *Counter == 1){
         *Min = *CuentaPasos;
         copiarLaberinto(Laberinto, Laberinto2, Cy);
