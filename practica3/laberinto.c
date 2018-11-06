@@ -49,7 +49,7 @@ int main(int argc, char *argv[]) {
 
 // DESARROLLO DE LAS FUNCIONES
 void leerArchivo (char Archivo[], char Laberinto[30][30], int* y) { // Funcion que lee el archivo
-  FILE* Arch = fopen(Archivo, "r+b");
+  FILE* Arch = fopen(Archivo, "r");
   char c; // Caracter que vamos a ir leyendo
   int i = 0, j = 0;
   // Copiamos el contenido del archivo a un arreglo bidimensional
