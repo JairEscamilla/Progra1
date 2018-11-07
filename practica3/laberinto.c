@@ -53,6 +53,10 @@ void leerArchivo (char Archivo[], char Laberinto[30][30], int* y) { // Funcion q
   char c; // Caracter que vamos a ir leyendo
   int i = 0, j = 0;
   // Copiamos el contenido del archivo a un arreglo bidimensional
+  if (Arch == NULL) {
+    printf("Error, opcion incorrecta.\nEl archivo no fue encontrado.\n");
+    exit(0);
+  }
   while(!feof(Arch)){
     fread(&c, sizeof(char), 1, Arch);
     Laberinto[j][i] = c;
