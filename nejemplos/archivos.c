@@ -3,7 +3,7 @@
 int main(){
   FILE* Archivo;
   char Frase[200];
-  Archivo = fopen("algo.txt", "at");
+  Archivo = fopen("algo.txt", "wt");
   printf("Dame tu frase favorita: ");
   gets(Frase);
   fprintf(Archivo, "Tu frase favorita es: \n   %s\n", Frase);
