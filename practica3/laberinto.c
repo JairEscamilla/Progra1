@@ -7,7 +7,7 @@
 void leerArchivo(char Archivo[], char Laberinto[30][30], int* y);
 void imprimirLaberinto(char Laberinto[30][30], int y);
 void analizarLaberinto(char Laberinto[30][30], int* x, int* y, int cy);
-void resolverLaberinto(char Laberinto[30][30], int x, int y, int Cy, int* Counter, int* Min, int* CuentaPasos, char Laberinto2[30][30]);
+void resolverLaberinto(char Laberinto[30][30], int x, int y, int Cy, int* Counter, int* Min, int* CuentaPasos, char Laberinto2[30][30], int Opcion);
 void copiarLaberinto(char Laberinto[30][30], char Laberinto2[30][30], int Altura);
 void desplegarResultados(char Laberinto2[30][30], int Totsoluciones, int CamOptimo, int Cy);
 // FIN DE PROTOTIPOS DE FUNCIONES
@@ -23,6 +23,7 @@ int main(int argc, char *argv[]) {
   int contador = 0; // Variable para la cantidad de salidas
   int Min = 0; // Variable que almacenará el camino minimo
   int CuentaPasos = 0; // Variable que contará los pasos
+  int flag = 0;
   // Fin de declarcion de variables
   if((argc < 2 || argc > 3) || (strcmp(argv[1], Validacion) == 0)){ // Validamos la cantidad de parametros y formato
     printf("Error, opcion incorrecta\n");
@@ -30,13 +31,15 @@ int main(int argc, char *argv[]) {
     if(argc == 3 && strcmp(argv[2], Validacion) != 0){ // Validamos que el tercer parametro no sea distinto de -p
       printf("Error, opcion incorrecta\n");
     }else{
+      if (argc == 3 && strcmp(argv[2], Validacion) == 0)
+        flag = 1;
       strcpy(Archivo, argv[1]);
       leerArchivo(Archivo, Laberinto, &y); // Leemos el archivo
       imprimirLaberinto(Laberinto, y); // Imprimimos el laberinto
       printf("Presione enter para continuar... ");
       getchar(); // Pausa para visualizar el laberinto
       analizarLaberinto(Laberinto, &Entradax, &Entraday, y);
-      resolverLaberinto(Laberinto, Entradax, Entraday, y, &contador, &Min, &CuentaPasos, Laberinto2);
+      resolverLaberinto(Laberinto, Entradax, Entraday, y, &contador, &Min, &CuentaPasos, Laberinto2, flag);
       desplegarResultados(Laberinto2, contador, Min, y);
     }
   }
@@ -48,6 +51,10 @@ int main(int argc, char *argv[]) {
 void leerArchivo (char Archivo[], char Laberinto[30][30], int* y) { // Funcion que lee el archivo
   FILE* Arch = fopen(Archivo, "r");
   int i = 0;
+  if (Arch == NULL) {
+    printf("Error, opción incorrecta\nEl archivo no fue encontrado\n");
+    exit(0);
+  }
   // Copiamos el contenido del archivo a un arreglo bidimensional
   while(!feof(Arch)){
     fgets(Laberinto[i], 31, Arch);
@@ -94,10 +101,12 @@ void analizarLaberinto(char Laberinto[30][30], int* x, int* y, int cy){ // Funci
     }
   }
 }
-void resolverLaberinto(char Laberinto[30][30], int x, int y, int Cy, int* Counter, int* Min, int* CuentaPasos, char Laberinto2[30][30]){ // Funcion que resuelve el laberinto
+void resolverLaberinto(char Laberinto[30][30], int x, int y, int Cy, int* Counter, int* Min, int* CuentaPasos, char Laberinto2[30][30], int Opcion){ // Funcion que resuelve el laberinto
   if (Laberinto[x][y] != 'S') { // Verificamos que no nos encontremos en la salida
-    imprimirLaberinto(Laberinto, Cy); // Imprimimos el laberinto
-    system("sleep 0.1"); // Hacemos una pausa de 5 milisegundos
+    if(Opcion == 1){
+      imprimirLaberinto(Laberinto, Cy); // Imprimimos el laberinto
+      system("sleep 0.1"); // Hacemos una pausa de 5 milisegundos
+    }
     if(Laberinto[x+1][y] == 'S' || Laberinto[x][y+1] == 'S' || Laberinto[x-1][y] == 'S' || Laberinto[x][y-1] == 'S'){ // Contamos las veces que encontramos la salida
       (*Counter)++;
       if(*CuentaPasos < *Min || *Counter == 1){
@@ -108,29 +117,31 @@ void resolverLaberinto(char Laberinto[30][30], int x, int y, int Cy, int* Counte
     if (Laberinto[x][y+1] != '*' && Laberinto[x][y+1] != 'S' && Laberinto[x][y+1] != '.' && Laberinto[x][y+1] != 'E') { // Condicion para que se mueva a la derecha
       Laberinto[x][y+1] = '.';
       (*CuentaPasos)++;
-      resolverLaberinto(Laberinto, x, y+1, Cy, Counter, Min, CuentaPasos, Laberinto2);
+      resolverLaberinto(Laberinto, x, y+1, Cy, Counter, Min, CuentaPasos, Laberinto2, Opcion);
     }
     if (Laberinto[x-1][y] != '*' && Laberinto[x-1][y] != 'S' && Laberinto[x-1][y] != '.' && Laberinto[x-1][y] != 'E') { // Condicion para que se mueva hacia arriba
       Laberinto[x-1][y] = '.';
       (*CuentaPasos)++;
-      resolverLaberinto(Laberinto, x-1, y, Cy, Counter, Min, CuentaPasos, Laberinto2);
+      resolverLaberinto(Laberinto, x-1, y, Cy, Counter, Min, CuentaPasos, Laberinto2, Opcion);
     }
     if (Laberinto[x+1][y] != '*' && Laberinto[x+1][y] != 'S' && Laberinto[x+1][y] != '.' && Laberinto[x+1][y] != 'E') { // Condicion para que se mueva hacia abajo
       Laberinto[x+1][y] = '.';
       (*CuentaPasos)++;
-      resolverLaberinto(Laberinto, x+1, y, Cy, Counter, Min, CuentaPasos, Laberinto2);
+      resolverLaberinto(Laberinto, x+1, y, Cy, Counter, Min, CuentaPasos, Laberinto2, Opcion);
     }
     if (Laberinto[x][y-1] != '*' && Laberinto[x][y-1] != 'S' && Laberinto[x][y-1] != '.' && Laberinto[x][y-1] != 'E') { // Condicion para que se mueva a la izquierda
       Laberinto[x][y-1] = '.';
       (*CuentaPasos)++;
-      resolverLaberinto(Laberinto, x, y-1, Cy, Counter, Min, CuentaPasos, Laberinto2);
+      resolverLaberinto(Laberinto, x, y-1, Cy, Counter, Min, CuentaPasos, Laberinto2, Opcion);
     }
     if(Laberinto[x][y] != 'E'){ // Verificamos que no nos encontremos en la salida para comenzar a retroceder
       Laberinto[x][y] = ' '; // Limpiamos la casilla
       (*CuentaPasos)--;
     }
-    imprimirLaberinto(Laberinto, Cy); // Imprimimos el laberinto
-    system("sleep 0.1"); // Pausamos durante 5 milisegundos
+    if(Opcion == 1){
+      imprimirLaberinto(Laberinto, Cy); // Imprimimos el laberinto
+      system("sleep 0.1"); // Pausamos durante 5 milisegundos
+    }
   }
 } // funcion que resuelve el laberinto
 // FIN DE DESARROLLO DE FUNCIONES
