@@ -35,10 +35,7 @@ int main(int argc, char *argv[]) {
       imprimirLaberinto(Laberinto, y); // Imprimimos el laberinto
       printf("Presione enter para continuar... ");
       getchar(); // Pausa para visualizar el laberinto
-      printf("Continuacion del problema\n");
       analizarLaberinto(Laberinto, &Entradax, &Entraday, y);
-      system("clear");
-      printf("Continuamos con el desarrollo del laberinto\n");
       resolverLaberinto(Laberinto, Entradax, Entraday, y, &contador, &Min, &CuentaPasos, Laberinto2);
       desplegarResultados(Laberinto2, contador, Min, y);
     }
