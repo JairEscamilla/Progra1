@@ -4,12 +4,12 @@
 #include <stdlib.h>
 
 // PROTOTIPOS DE FUNCIONES
-void leerArchivo(char Archivo[], char Laberinto[30][30], int* y);
-void imprimirLaberinto(char Laberinto[30][30], int y);
-void analizarLaberinto(char Laberinto[30][30], int* x, int* y, int cy);
-void resolverLaberinto(char Laberinto[30][30], int x, int y, int Cy, int* Counter, int* Min, int* CuentaPasos, char Laberinto2[30][30], int Opcion);
-void copiarLaberinto(char Laberinto[30][30], char Laberinto2[30][30], int Altura);
-void desplegarResultados(char Laberinto2[30][30], int Totsoluciones, int CamOptimo, int Cy);
+void leerArchivo(char Archivo[], char Laberinto[30][30], int* y); // Funcion que carga el archivo y lo copia a una matriz
+void imprimirLaberinto(char Laberinto[30][30], int y); // Funcion que imprime el laberinto
+void analizarLaberinto(char Laberinto[30][30], int* x, int* y, int cy); // Funcion que encuentra las coordenadas del laberinto
+void resolverLaberinto(char Laberinto[30][30], int x, int y, int Cy, int* Counter, int* Min, int* CuentaPasos, char Laberinto2[30][30], int Opcion); // Funcion que resuleve el laberinto
+void copiarLaberinto(char Laberinto[30][30], char Laberinto2[30][30], int Altura); // Copia de un laberinto a otro
+void desplegarResultados(char Laberinto2[30][30], int Totsoluciones, int CamOptimo, int Cy); // Despliega los resultados
 // FIN DE PROTOTIPOS DE FUNCIONES
 
 // FUNCION PRINCIPAL
@@ -23,7 +23,7 @@ int main(int argc, char *argv[]) {
   int contador = 0; // Variable para la cantidad de salidas
   int Min = 0; // Variable que almacenará el camino minimo
   int CuentaPasos = 0; // Variable que contará los pasos
-  int flag = 0;
+  int flag = 0; // Variable para determinar si se imprimen los pasos o no
   // Fin de declarcion de variables
   if((argc < 2 || argc > 3) || (strcmp(argv[1], Validacion) == 0)){ // Validamos la cantidad de parametros y formato
     printf("Error, opcion incorrecta\n");
@@ -31,16 +31,16 @@ int main(int argc, char *argv[]) {
     if(argc == 3 && strcmp(argv[2], Validacion) != 0){ // Validamos que el tercer parametro no sea distinto de -p
       printf("Error, opcion incorrecta\n");
     }else{
-      if (argc == 3 && strcmp(argv[2], Validacion) == 0)
+      if (argc == 3 && strcmp(argv[2], Validacion) == 0) // En caso de que el usuario quiera los pasos, asignamos 1 a la variable flag
         flag = 1;
-      strcpy(Archivo, argv[1]);
+      strcpy(Archivo, argv[1]); // Copiamos a la variable Archivo el argumento 1 que se paso por terminal
       leerArchivo(Archivo, Laberinto, &y); // Leemos el archivo
       imprimirLaberinto(Laberinto, y); // Imprimimos el laberinto
       printf("Presione enter para continuar... ");
       getchar(); // Pausa para visualizar el laberinto
-      analizarLaberinto(Laberinto, &Entradax, &Entraday, y);
-      resolverLaberinto(Laberinto, Entradax, Entraday, y, &contador, &Min, &CuentaPasos, Laberinto2, flag);
-      desplegarResultados(Laberinto2, contador, Min, y);
+      analizarLaberinto(Laberinto, &Entradax, &Entraday, y); // Encontramos las coordenadas de la entrada
+      resolverLaberinto(Laberinto, Entradax, Entraday, y, &contador, &Min, &CuentaPasos, Laberinto2, flag); // Resolvemos el laberinto
+      desplegarResultados(Laberinto2, contador, Min, y); // Desplegamos los resultados
     }
   }
   return 0;
@@ -49,25 +49,24 @@ int main(int argc, char *argv[]) {
 
 // DESARROLLO DE LAS FUNCIONES
 void leerArchivo (char Archivo[], char Laberinto[30][30], int* y) { // Funcion que lee el archivo
-  FILE* Arch = fopen(Archivo, "r");
-  int i = 0;
-  if (Arch == NULL) {
+  FILE* Arch = fopen(Archivo, "r"); // Abrimos el archivo
+  int i = 0; // Inicializamos a i
+  if (Arch == NULL) { // Verificamos que no haya habido ningun problema al momento de abrir el archivo
     printf("Error, opción incorrecta\nEl archivo no fue encontrado\n");
     exit(0);
   }
   // Copiamos el contenido del archivo a un arreglo bidimensional
-  while(!feof(Arch)){
+  while(!feof(Arch)){ // Mientras que no sea el final del archivo, leemos el laberinto
     fgets(Laberinto[i], 31, Arch);
     i++;
   }
-
-  *y = i;
-  fclose(Arch);
+  *y = i; // Obtenemos la altura del laberinto
+  fclose(Arch); // Cerramos el archivo
 }
 void imprimirLaberinto(char Laberinto[30][30], int y){ // Funcion que imprime en pantalla el laberinto
-  system("clear");
-  int j = 0;
-  for(int i = 0; i < y-1; i++){
+  system("clear"); // Limpiamos pantalla
+  int j = 0; // Inicializamos j
+  for(int i = 0; i < y-1; i++){ // Establecemos dos ciclos para imprimir el laberinto
     j = 0;
     while (Laberinto[i][j] != '\n') {
       printf("%c", Laberinto[i][j]);
@@ -76,25 +75,13 @@ void imprimirLaberinto(char Laberinto[30][30], int y){ // Funcion que imprime en
     printf("\n");
   }
 }
-void copiarLaberinto(char Laberinto[30][30], char Laberinto2[30][30], int Altura){
-  int i = 0;
-  while (i < Altura) {
-    strcpy(Laberinto2[i], Laberinto[i]);
-    i++;
-  }
-}
-void desplegarResultados(char Laberinto2[30][30], int Totsoluciones, int CamOptimo, int Cy) {
-  imprimirLaberinto(Laberinto2, Cy);
-  printf("Camino optimo: %d pasos.\n", CamOptimo);
-  printf("Se encontraron %d caminos de salida.\n", Totsoluciones);
-}
 void analizarLaberinto(char Laberinto[30][30], int* x, int* y, int cy){ // Funcion que obtiene las coordenadas de la entrada
   int j = 0;
-  for(int i = 0; i < cy-1; i++){
+  for(int i = 0; i < cy-1; i++){ // Recorremos la altura
     j = 0;
-    while (Laberinto[i][j] != '\n') {
+    while (Laberinto[i][j] != '\n') { // Recorremos el ancho
       j++;
-      if (Laberinto[i][j] == 'E') {
+      if (Laberinto[i][j] == 'E') { // Obtenemos las coordenadas de la Entrada
         *x = i;
         *y = j;
       }
@@ -144,4 +131,16 @@ void resolverLaberinto(char Laberinto[30][30], int x, int y, int Cy, int* Counte
     }
   }
 } // funcion que resuelve el laberinto
+void copiarLaberinto(char Laberinto[30][30], char Laberinto2[30][30], int Altura){ // Funcion que copia de una matriz a otra
+  int i = 0; // Copiamos el laberinto a una nueva matriz
+  while (i < Altura) {
+    strcpy(Laberinto2[i], Laberinto[i]);
+    i++;
+  }
+}
+void desplegarResultados(char Laberinto2[30][30], int Totsoluciones, int CamOptimo, int Cy) { // Funcion que despliega los resultados obtenidos
+  imprimirLaberinto(Laberinto2, Cy); // Imprime laberinto
+  printf("Camino optimo: %d pasos.\n", CamOptimo);
+  printf("Se encontraron %d caminos de salida.\n", Totsoluciones);
+}
 // FIN DE DESARROLLO DE FUNCIONES
