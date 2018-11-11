@@ -50,25 +50,14 @@ int main(int argc, char *argv[]) {
 // DESARROLLO DE LAS FUNCIONES
 void leerArchivo (char Archivo[], char Laberinto[30][30], int* y) { // Funcion que lee el archivo
   FILE* Arch = fopen(Archivo, "r");
-  char c; // Caracter que vamos a ir leyendo
-  int i = 0, j = 0;
+  int i = 0;
   // Copiamos el contenido del archivo a un arreglo bidimensional
-  if (Arch == NULL) {
-    printf("Error, opcion incorrecta.\nEl archivo no fue encontrado.\n");
-    exit(0);
-  }
   while(!feof(Arch)){
-    fread(&c, sizeof(char), 1, Arch);
-    Laberinto[j][i] = c;
-    if (c == '\n') {
-      Laberinto[j][i] = '\n';
-      j++;
-      i = -1;
-    }
+    fgets(Laberinto[i], 31, Arch);
     i++;
   }
 
-  *y = j;
+  *y = i;
   fclose(Arch);
 }
 void imprimirLaberinto(char Laberinto[30][30], int y){ // Funcion que imprime en pantalla el laberinto
