@@ -27,9 +27,11 @@ int main(int argc, char *argv[]) {
   // Fin de declarcion de variables
   if((argc < 2 || argc > 3) || (strcmp(argv[1], Validacion) == 0)){ // Validamos la cantidad de parametros y formato
     printf("Error, opcion incorrecta\n");
+    printf("Uso: $ laberinto nombre_archivo\n     $ laberinto nombre_archivo -pasos\n");
   }else{
     if(argc == 3 && strcmp(argv[2], Validacion) != 0){ // Validamos que el tercer parametro no sea distinto de -p
       printf("Error, opcion incorrecta\n");
+      printf("Uso: $ laberinto nombre_archivo\n     $ laberinto nombre_archivo -pasos\n");
     }else{
       if (argc == 3 && strcmp(argv[2], Validacion) == 0) // En caso de que el usuario quiera los pasos, asignamos 1 a la variable flag
         flag = 1;
@@ -53,6 +55,7 @@ void leerArchivo (char Archivo[], char Laberinto[30][30], int* y) { // Funcion q
   int i = 0; // Inicializamos a i
   if (Arch == NULL) { // Verificamos que no haya habido ningun problema al momento de abrir el archivo
     printf("Error, opción incorrecta\nEl archivo no fue encontrado\n");
+    printf("Uso: $ laberinto nombre_archivo\n     $ laberinto nombre_archivo -pasos\n");
     exit(0);
   }
   // Copiamos el contenido del archivo a un arreglo bidimensional
