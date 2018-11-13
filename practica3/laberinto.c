@@ -15,7 +15,7 @@ void desplegarResultados(char Laberinto2[30][30], int Totsoluciones, int CamOpti
 // FUNCION PRINCIPAL
 int main(int argc, char *argv[]) {
   // Declaracion de variables
-  char Archivo[50], Validacion[] = "-p"; // Nombre del archivo y variable para validar la ejecucion del programa
+  char Archivo[50], Validacion[] = "-pasos"; // Nombre del archivo y variable para validar la ejecucion del programa
   char Laberinto[30][30]; // Arreglo bidimensional que almacena el laberinto
   char Laberinto2[30][30]; // Arreglo que almacena el laberinto con la solucion optima
   int y; // Altura del laberinto
