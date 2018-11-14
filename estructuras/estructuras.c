@@ -49,7 +49,7 @@ typedef struct defAlumno{
 // PROTOTIPOS
 void Leer(tipoAlumno[]);
 void Imprimir(tipoAlumno[]);
-// FUNCION PRINCIPAL
+// FUNCION PRINCIPAL 
 int main(){
   tipoAlumno Alumnos[5];
   Leer(Alumnos);
