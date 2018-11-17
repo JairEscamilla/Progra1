@@ -21,6 +21,7 @@ typedef struct defLogin{
 void validar_archivo_login();
 int Pedir_datos(char[], char[]);
 int iniciar_sesion(int*);
+void leerListaUsuarios(User**);
 //******************************************************************************
 
 
@@ -30,6 +31,7 @@ int main(int argc, char *argv[]) {
   int TipoUsuario = 0;
   char Nombre[50];
   char Password[50];
+  User* ListaUsuarios = NULL;
   if (argc != 1) {
     printf("Esto se va a desarrollar despues\n");
   }else{
@@ -38,6 +40,7 @@ int main(int argc, char *argv[]) {
     while(Pedir_datos(Password, "password"));
     puts(Nombre);
     puts(Password);
+    leerListaUsuarios(&ListaUsuarios);
   }
   return 0;
 }
@@ -81,6 +84,26 @@ int Pedir_datos(char Dato[], char NombreDato[]){
   }
   Dato[i] = '\0';
   return status;
+}
+void leerListaUsuarios(User** Lista){
+  FILE* Archivo = fopen("login.txt", "rt");
+  if (Archivo == NULL) {
+    printf("Ha ocurrido un error, vuelva a intentar\n");
+    exit(0);
+  }
+  while (!feof(Archivo)) {
+    User* Usuario = (User*)malloc(sizeof(User));
+    fscanf(Archivo,"%s*%s*%s*%ld*%ld*%d", Usuario->Nombre, Usuario->Direccion, Usuario->Contrasenia, &Usuario->TarjetaCredito, &Usuario->UserNumber, &Usuario->Flag);
+    if (*Lista == NULL) {
+      *Lista = Usuario;
+    }else{
+      User* aux = *Lista;
+      while (aux->siguiente != NULL) {
+        aux = aux->siguiente;
+      }
+      aux->siguiente = Usuario;
+    }
+  }
 }
 int iniciar_sesion(int* TipoUsuario){
   int inicio = 0;

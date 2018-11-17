@@ -31,4 +31,4 @@ void construirecuacion(Punto c1, Punto c2){
     printf("La ecuacion de la recta es: y = %.2fx + %0.2f\n", m, b);
   else
     printf("La ecuacion de la recta es: y = %.2fx %0.2f\n", m, b);
-}
+}  leerCoordenada(&c1);
