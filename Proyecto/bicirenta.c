@@ -57,7 +57,7 @@ void validar_archivo_login(){
     Usuario.TarjetaCredito = 1234567;
     Usuario.UserNumber = 1;
     Usuario.Flag = 1;
-    fprintf(Archivo, "%s\n%s\n%s\n%ld\n%ld\n%d\n", Usuario.Nombre, Usuario.Direccion, Usuario.Contrasenia, Usuario.TarjetaCredito, Usuario.UserNumber, Usuario.Flag);
+    fprintf(Archivo, "%s*%s*%s*%ld*%ld*%d\n", Usuario.Nombre, Usuario.Direccion, Usuario.Contrasenia, Usuario.TarjetaCredito, Usuario.UserNumber, Usuario.Flag);
     fclose(Archivo);
   }
 }
