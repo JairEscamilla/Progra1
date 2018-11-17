@@ -18,7 +18,7 @@ typedef struct defLogin{
 // Prototipos de las funciones
 //******************************************************************************
 void validar_archivo_login();
-int Pedir_datos(char[]);
+int Pedir_datos(char[], char[]);
 int iniciar_sesion(int*);
 //******************************************************************************
 
@@ -27,21 +27,16 @@ int iniciar_sesion(int*);
 //******************************************************************************
 int main(int argc, char *argv[]) {
   int TipoUsuario = 0;
-  char Nombre[10];
+  char Nombre[50];
   char Password[50];
   if (argc != 1) {
     printf("Esto se va a desarrollar despues\n");
   }else{
     validar_archivo_login();
-    printf("%d, \n", gets(Nombre));
+    while(Pedir_datos(Nombre, "nombre"));
+    while(Pedir_datos(Password, "password"));
     puts(Nombre);
-  /*  do {
-      printf("Ingresar nombre: ");
-    }while(Pedir_datos(Nombre) == 1);
-    do{
-      printf("Ingresar contrasenia: ");
-    }while(Pedir_datos(Password));
-    iniciar_sesion(&TipoUsuario);*/
+    puts(Password);
   }
   return 0;
 }
@@ -66,17 +61,24 @@ void validar_archivo_login(){
     fclose(Archivo);
   }
 }
-int Pedir_datos(char Dato[10]){
+int Pedir_datos(char Dato[], char NombreDato[]){
   system("clear");
-  if (gets(Dato)) {
-    Dato[strlen(Dato)] = '\0';
-    puts(Dato);
-    getchar();
-    return 0;
-  }else{
-    printf("Ha superado el limite de caracteres permitidos");
-    return 1;
+  int i = 0;
+  int status = 0;
+  printf("Ingresar %s: ", NombreDato);
+  i = 0;
+  while ((Dato[i] = getchar()) != '\n' && status == 0) {
+    if (i > 50) {
+      printf("Haz sobrepasado el limite de caracteres!\nPresione enter para volver a intentar");
+      getchar();
+      __fpurge(stdin);
+      Dato[i+1] = '\n';
+      status = 1;
+    }
+    i++;
   }
+  Dato[i] = '\0';
+  return status;
 }
 int iniciar_sesion(int* TipoUsuario){
   int inicio = 0;
