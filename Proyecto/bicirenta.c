@@ -22,6 +22,8 @@ void validar_archivo_login();
 int Pedir_datos(char[], char[]);
 int iniciar_sesion(int*);
 void leerListaUsuarios(User**);
+
+void liberarMemoria(User**);
 //******************************************************************************
 
 
@@ -42,6 +44,8 @@ int main(int argc, char *argv[]) {
     puts(Password);
     leerListaUsuarios(&ListaUsuarios);
   }
+
+  liberarMemoria(&ListaUsuarios);
   return 0;
 }
 //******************************************************************************
@@ -105,6 +109,15 @@ void leerListaUsuarios(User** Lista){
     }
   }
 }
+
+void liberarMemoria(User** Lista){
+  while (*Lista !=  NULL) {
+    User* Proximo = (*Lista)->siguiente;
+    free(*Lista);
+    *Lista = Proximo;
+  }
+}
+
 int iniciar_sesion(int* TipoUsuario){
   int inicio = 0;
 
