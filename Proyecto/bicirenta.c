@@ -11,6 +11,7 @@ typedef struct defLogin{
   long TarjetaCredito;
   long UserNumber;
   int Flag;
+  struct defLogin* siguiente;
 }User;
 //******************************************************************************
 
@@ -57,6 +58,7 @@ void validar_archivo_login(){
     Usuario.TarjetaCredito = 1234567;
     Usuario.UserNumber = 1;
     Usuario.Flag = 1;
+    Usuario.siguiente = NULL;
     fprintf(Archivo, "%s*%s*%s*%ld*%ld*%d\n", Usuario.Nombre, Usuario.Direccion, Usuario.Contrasenia, Usuario.TarjetaCredito, Usuario.UserNumber, Usuario.Flag);
     fclose(Archivo);
   }
