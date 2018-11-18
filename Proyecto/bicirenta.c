@@ -22,6 +22,7 @@ void validar_archivo_login();
 int Pedir_datos(char[], char[]);
 int iniciar_sesion(int*, char[], char[], User*);
 void leerListaUsuarios(User**);
+void MenuAdministrador();
 void MostrarLista(User*);
 void liberarMemoria(User**);
 //******************************************************************************
@@ -41,8 +42,11 @@ int main(int argc, char *argv[]) {
     while(Pedir_datos(Nombre, "nombre"));
     while(Pedir_datos(Password, "password"));
     leerListaUsuarios(&ListaUsuarios);
-    if(iniciar_sesion(&TipoUsuario, Nombre, Password, ListaUsuarios))
-      printf("Ha iniciado sesion correctamente\n");
+    if(iniciar_sesion(&TipoUsuario, Nombre, Password, ListaUsuarios)){
+      if (TipoUsuario == 1) {
+        MenuAdministrador();
+      }
+    }
     else
       printf("Fallo en la autenticacion\n");
   }
@@ -160,5 +164,17 @@ int iniciar_sesion(int* TipoUsuario, char Nombre[], char Password[], User* Lista
     aux = aux->siguiente;
   }while ((aux != NULL) && (strcmp(Nombre, aux->Nombre) != 0) && (strcmp(Password, aux->Contrasenia) != 0));
   return inicio;
+}
+void MenuAdministrador() {
+  system("clear");
+  printf("Ha iniciado sesion correctamente\n");
+  printf("a. Alta de una nueva bici-estacion.\n");
+  printf("b. Baja de una nueva bici-estacion.\n");
+  printf("c. Reasignar bicicletas entre biciestaciones.\n");
+  printf("d. Mostrar estatus.\n");
+  printf("e. Alta de un usuario del servicio.\n");
+  printf("f. Baja de un usuario del servicio.\n");
+  printf("g. Salida del sistema.\n\n");
+  printf("Seleccione una opcion-> ");
 }
 //******************************************************************************
