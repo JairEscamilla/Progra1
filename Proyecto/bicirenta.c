@@ -20,9 +20,9 @@ typedef struct defLogin{
 //******************************************************************************
 void validar_archivo_login();
 int Pedir_datos(char[], char[]);
-int iniciar_sesion(int*);
+int iniciar_sesion(int*, char[], char[], User*);
 void leerListaUsuarios(User**);
-
+void MostrarLista(User*);
 void liberarMemoria(User**);
 //******************************************************************************
 
@@ -40,9 +40,11 @@ int main(int argc, char *argv[]) {
     validar_archivo_login();
     while(Pedir_datos(Nombre, "nombre"));
     while(Pedir_datos(Password, "password"));
-    puts(Nombre);
-    puts(Password);
     leerListaUsuarios(&ListaUsuarios);
+    if(iniciar_sesion(&TipoUsuario, Nombre, Password, ListaUsuarios))
+      printf("Ha iniciado sesion correctamente\n");
+    else
+      printf("Fallo en la autenticacion\n");
   }
 
   liberarMemoria(&ListaUsuarios);
@@ -66,7 +68,7 @@ void validar_archivo_login(){
     Usuario.UserNumber = 1;
     Usuario.Flag = 1;
     Usuario.siguiente = NULL;
-    fprintf(Archivo, "%s*%s*%s*%ld*%ld*%d\n", Usuario.Nombre, Usuario.Direccion, Usuario.Contrasenia, Usuario.TarjetaCredito, Usuario.UserNumber, Usuario.Flag);
+    fprintf(Archivo, "%s/%s/%s/%ld/%ld/%d", Usuario.Nombre, Usuario.Direccion, Usuario.Contrasenia, Usuario.TarjetaCredito, Usuario.UserNumber, Usuario.Flag);
     fclose(Archivo);
   }
 }
@@ -90,6 +92,11 @@ int Pedir_datos(char Dato[], char NombreDato[]){
   return status;
 }
 void leerListaUsuarios(User** Lista){
+  char linea[500];
+  char Datos[6][200];
+  int i;
+  int j = 0;
+  int contador = 0;
   FILE* Archivo = fopen("login.txt", "rt");
   if (Archivo == NULL) {
     printf("Ha ocurrido un error, vuelva a intentar\n");
@@ -97,7 +104,25 @@ void leerListaUsuarios(User** Lista){
   }
   while (!feof(Archivo)) {
     User* Usuario = (User*)malloc(sizeof(User));
-    fscanf(Archivo,"%s*%s*%s*%ld*%ld*%d", Usuario->Nombre, Usuario->Direccion, Usuario->Contrasenia, &Usuario->TarjetaCredito, &Usuario->UserNumber, &Usuario->Flag);
+    i = 0;
+    fgets(linea, 500, Archivo);
+    while(linea[i] != '\0'){
+      Datos[contador][j] = linea[i];
+      if(linea[i+1] == '/'){
+        Datos[contador][j+1] = '\0';
+        contador++;
+        j = -1;
+        i++;
+      }
+      i++;
+      j++;
+    }
+    strcpy(Usuario->Nombre, Datos[0]);
+    strcpy(Usuario->Direccion, Datos[1]);
+    strcpy(Usuario->Contrasenia, Datos[2]);
+    Usuario->TarjetaCredito = atoi(Datos[3]);
+    Usuario->UserNumber = atoi(Datos[4]);
+    Usuario->Flag = atoi(Datos[5]);
     if (*Lista == NULL) {
       *Lista = Usuario;
     }else{
@@ -109,7 +134,6 @@ void leerListaUsuarios(User** Lista){
     }
   }
 }
-
 void liberarMemoria(User** Lista){
   while (*Lista !=  NULL) {
     User* Proximo = (*Lista)->siguiente;
@@ -117,10 +141,24 @@ void liberarMemoria(User** Lista){
     *Lista = Proximo;
   }
 }
-
-int iniciar_sesion(int* TipoUsuario){
+void MostrarLista(User* Lista){
+  User* aux = Lista;
+  while (aux != NULL) {
+    printf("Nombre lista: %s\nPassword lista: %s\n", aux->Nombre, aux->Contrasenia);
+    printf("Direccion: %s\n", aux->Direccion);
+    aux = aux->siguiente;
+  }
+}
+int iniciar_sesion(int* TipoUsuario, char Nombre[], char Password[], User* Lista){
+  User* aux = Lista;
   int inicio = 0;
-
+  do{
+    if ((strcmp(Nombre, aux->Nombre) == 0) && (strcmp(Password, aux->Contrasenia) == 0)) {
+      inicio = 1;
+      *TipoUsuario = aux->Flag;
+    }
+    aux = aux->siguiente;
+  }while ((aux != NULL) && (strcmp(Nombre, aux->Nombre) != 0) && (strcmp(Password, aux->Contrasenia) != 0));
   return inicio;
 }
 //******************************************************************************
