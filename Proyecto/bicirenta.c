@@ -167,14 +167,14 @@ int iniciar_sesion(int* TipoUsuario, char Nombre[], char Password[], User* Lista
 }
 void MenuAdministrador() {
   system("clear");
-  printf("Ha iniciado sesion correctamente\n");
-  printf("a. Alta de una nueva bici-estacion.\n");
-  printf("b. Baja de una nueva bici-estacion.\n");
-  printf("c. Reasignar bicicletas entre biciestaciones.\n");
-  printf("d. Mostrar estatus.\n");
-  printf("e. Alta de un usuario del servicio.\n");
-  printf("f. Baja de un usuario del servicio.\n");
-  printf("g. Salida del sistema.\n\n");
+  printf("Ha iniciado sesion correctamente\n\n");
+  printf("\ta. Alta de una nueva bici-estacion.\n");
+  printf("\tb. Baja de una nueva bici-estacion.\n");
+  printf("\tc. Reasignar bicicletas entre biciestaciones.\n");
+  printf("\td. Mostrar estatus.\n");
+  printf("\te. Alta de un usuario del servicio.\n");
+  printf("\tf. Baja de un usuario del servicio.\n");
+  printf("\tg. Salida del sistema.\n\n");
   printf("Seleccione una opcion-> ");
 }
 //******************************************************************************
