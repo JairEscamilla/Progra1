@@ -25,6 +25,7 @@ void leerListaUsuarios(User**);
 void separarListaUsuarios(int* i, int* j, int* contador, char linea[], char Datos[6][200]);
 void limpiarDatos(char Datos[6][200]);
 void MenuAdministrador();
+void MenuUsuario();
 void MostrarLista(User*);
 void liberarMemoria(User**);
 //******************************************************************************
@@ -44,9 +45,13 @@ int main(int argc, char *argv[]) {
     while(Pedir_datos(Nombre, "nombre"));
     while(Pedir_datos(Password, "password"));
     leerListaUsuarios(&ListaUsuarios);
+  //  MostrarLista(ListaUsuarios);
     if(iniciar_sesion(&TipoUsuario, Nombre, Password, ListaUsuarios)){
       if (TipoUsuario == 1) {
         MenuAdministrador();
+      }
+      if (TipoUsuario == 0) {
+        MenuUsuario();
       }
     }
     else
@@ -73,8 +78,7 @@ void validar_archivo_login(){
     Usuario.TarjetaCredito = 1234567;
     Usuario.UserNumber = 1;
     Usuario.Flag = 1;
-    Usuario.siguiente = NULL;
-    fprintf(Archivo, "%s/%s/%s/%ld/%ld/%d", Usuario.Nombre, Usuario.Direccion, Usuario.Contrasenia, Usuario.TarjetaCredito, Usuario.UserNumber, Usuario.Flag);
+    fprintf(Archivo, "%s/%s/%s/%ld/%ld/%d/\n", Usuario.Nombre, Usuario.Direccion, Usuario.Contrasenia, Usuario.TarjetaCredito, Usuario.UserNumber, Usuario.Flag);
     fclose(Archivo);
   }
 }
@@ -96,37 +100,6 @@ int Pedir_datos(char Dato[], char NombreDato[]){
   }
   Dato[i] = '\0';
   return status;
-}
-void leerListaUsuarios(User** Lista){
-  char linea[500], Datos[6][200];
-  int i, j = 0, contador = 0;
-  FILE* Archivo = fopen("login.txt", "rt");
-  if (Archivo == NULL) {
-    printf("Ha ocurrido un error, vuelva a intentar\n");
-    exit(0);
-  }
-  while (!feof(Archivo)) {
-    User* Usuario = (User*)malloc(sizeof(User));
-    i = 0;
-    fgets(linea, 500, Archivo);
-    separarListaUsuarios(&i, &j, &contador, linea, Datos);
-    strcpy(Usuario->Nombre, Datos[0]);
-    strcpy(Usuario->Direccion, Datos[1]);
-    strcpy(Usuario->Contrasenia, Datos[2]);
-    Usuario->TarjetaCredito = atoi(Datos[3]);
-    Usuario->UserNumber = atoi(Datos[4]);
-    Usuario->Flag = atoi(Datos[5]);
-    if (*Lista == NULL) {
-      *Lista = Usuario;
-    }else{
-      User* aux = *Lista;
-      while (aux->siguiente != NULL) {
-        aux = aux->siguiente;
-      }
-      aux->siguiente = Usuario;
-    }
-    limpiarDatos(Datos);
-  }
 }
 void liberarMemoria(User** Lista){
   while (*Lista !=  NULL) {
@@ -152,7 +125,8 @@ int iniciar_sesion(int* TipoUsuario, char Nombre[], char Password[], User* Lista
       *TipoUsuario = aux->Flag;
     }
     aux = aux->siguiente;
-  }while ((aux != NULL) && (strcmp(Nombre, aux->Nombre) != 0) && (strcmp(Password, aux->Contrasenia) != 0));
+  }while ((aux != NULL) && ((strcmp(Nombre, aux->Nombre) == 0) && (strcmp(Password, aux->Contrasenia) == 0)));
+
   return inicio;
 }
 void MenuAdministrador() {
@@ -167,9 +141,51 @@ void MenuAdministrador() {
   printf("\tg. Salida del sistema.\n\n");
   printf("Seleccione una opcion-> ");
 }
+void MenuUsuario(){
+  system("clear");
+  printf("Ha iniciado sesion correctamente\n\n");
+  printf("\ta. Rentar una bicicleta.\n");
+  printf("\tb. Estacionar una bicicleta.\n");
+  printf("\tc. Mostrar el saldo.\n\n");
+  printf("Ingresar una opcion: ");
+}
+void leerListaUsuarios(User** Lista){
+  char linea[500], Datos[6][200];
+  int i, j = 0, contador = 0;
+  FILE* Archivo = fopen("login.txt", "rt");
+  if (Archivo == NULL) {
+    printf("Ha ocurrido un error, vuelva a intentar\n");
+    exit(0);
+  }
+  while (fgets(linea, 500, Archivo) != NULL) {
+    User* Usuario = (User*)malloc(sizeof(User));
+    i = 0;
+    contador = 0;
+    separarListaUsuarios(&i, &j, &contador, linea, Datos);
+  //  printf("%s\n\n", Datos[0]);
+    strcpy(Usuario->Nombre, Datos[0]);
+    strcpy(Usuario->Direccion, Datos[1]);
+    strcpy(Usuario->Contrasenia, Datos[2]);
+    Usuario->TarjetaCredito = atoi(Datos[3]);
+    Usuario->UserNumber = atoi(Datos[4]);
+    Usuario->Flag = atoi(Datos[5]);
+    Usuario->siguiente = NULL;
+    if (*Lista == NULL) {
+      *Lista = Usuario;
+    }else{
+      User* aux = *Lista;
+      while (aux->siguiente != NULL) {
+        aux = aux->siguiente;
+      }
+      aux->siguiente = Usuario;
+    }
+    //limpiarDatos(Datos);
+  }
+}
 void separarListaUsuarios(int* i, int* j, int* contador, char linea[], char Datos[6][200]){
-  while(linea[*i] != '\0'){
+  while(linea[*i] != '\0' && linea[*i] != '\n'){
     Datos[*contador][*j] = linea[*i];
+
     if(linea[*i+1] == '/'){
       Datos[(*contador)][(*j)+1] = '\0';
       (*contador)++;
