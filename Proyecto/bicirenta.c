@@ -23,6 +23,7 @@ int Pedir_datos(char[], char[]);
 int iniciar_sesion(int*, char[], char[], User*);
 void leerListaUsuarios(User**);
 void separarListaUsuarios(int* i, int* j, int* contador, char linea[], char Datos[6][200]);
+void limpiarDatos(char Datos[6][200]);
 void MenuAdministrador();
 void MostrarLista(User*);
 void liberarMemoria(User**);
@@ -96,7 +97,7 @@ int Pedir_datos(char Dato[], char NombreDato[]){
   Dato[i] = '\0';
   return status;
 }
-void leerListaUsuarios(User** Lista){ 
+void leerListaUsuarios(User** Lista){
   char linea[500], Datos[6][200];
   int i, j = 0, contador = 0;
   FILE* Archivo = fopen("login.txt", "rt");
@@ -124,6 +125,7 @@ void leerListaUsuarios(User** Lista){
       }
       aux->siguiente = Usuario;
     }
+    limpiarDatos(Datos);
   }
 }
 void liberarMemoria(User** Lista){
@@ -176,6 +178,11 @@ void separarListaUsuarios(int* i, int* j, int* contador, char linea[], char Dato
     }
     (*i)++;
     (*j)++;
+  }
+}
+void limpiarDatos(char Datos[6][200]){
+  for(int i = 0; i < 5; i++){
+    Datos[i][0] = '\0';
   }
 }
 //******************************************************************************
