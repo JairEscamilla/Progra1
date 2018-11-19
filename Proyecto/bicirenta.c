@@ -161,13 +161,14 @@ void MenuAdministrador() {
       printf("Baja de un usuario\n");
       break;
     case 'g':
-      printf("Salida del sistema\n");
+      printf("Hasta pronto\nVuelva pronto\n");
       exit(0);
       break;
     default:
-      printf("Opcion incorrecta\nSelecciona una opcion correcta\nPresiona enter para volver a intentar...");
+      printf("Opcion incorrecta\nSelecciona una opcion correcta.\n");
       break;
   }
+  printf("Presiona enter para volver al menu...");
   __fpurge(stdin);
   getchar();
   MenuAdministrador();
