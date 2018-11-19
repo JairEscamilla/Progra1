@@ -126,11 +126,11 @@ int iniciar_sesion(int* TipoUsuario, char Nombre[], char Password[], User* Lista
     }
     aux = aux->siguiente;
   }while ((aux != NULL) && ((strcmp(Nombre, aux->Nombre) == 0) && (strcmp(Password, aux->Contrasenia) == 0)));
-
   return inicio;
 }
 void MenuAdministrador() {
   system("clear");
+  char Opcion;
   printf("Ha iniciado sesion correctamente\n\n");
   printf("\ta. Alta de una nueva bici-estacion.\n");
   printf("\tb. Baja de una nueva bici-estacion.\n");
@@ -140,6 +140,37 @@ void MenuAdministrador() {
   printf("\tf. Baja de un usuario del servicio.\n");
   printf("\tg. Salida del sistema.\n\n");
   printf("Seleccione una opcion-> ");
+  scanf("%c", &Opcion);
+  switch (Opcion) {
+    case 'a':
+      printf("Alta de una bici-estacion\n");
+      break;
+    case 'b':
+      printf("Baja de una bici-estacion\n");
+      break;
+    case 'c':
+      printf("Reasignar bicicletas\n");
+      break;
+    case 'd':
+      printf("Mostrar estatus\n");
+      break;
+    case 'e':
+      printf("Alta de un usuario\n");
+      break;
+    case 'f':
+      printf("Baja de un usuario\n");
+      break;
+    case 'g':
+      printf("Salida del sistema\n");
+      exit(0);
+      break;
+    default:
+      printf("Opcion incorrecta\nSelecciona una opcion correcta\nPresiona enter para volver a intentar...");
+      break;
+  }
+  __fpurge(stdin);
+  getchar();
+  MenuAdministrador();
 }
 void MenuUsuario(){
   system("clear");
