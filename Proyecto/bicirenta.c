@@ -4,6 +4,7 @@
 #include <string.h>
 // Definimos las estructuras
 //******************************************************************************
+// Estructura de un Usuario
 typedef struct defLogin{
   char Nombre[50];
   char Direccion[200];
@@ -13,6 +14,16 @@ typedef struct defLogin{
   int Flag;
   struct defLogin* siguiente;
 }User;
+// Estructura de una biciestacion
+typedef struct defBiciestacion{
+  long NumBiciestacion;
+  char NombreGenerico[100];
+  char Calle[50];
+  int Numero;
+  int CP;
+  char Ciudad[50];
+  struct defBiciestacion* siguiente;
+}Biciestacion;
 //******************************************************************************
 
 
@@ -26,6 +37,7 @@ void separarListaUsuarios(int* i, int* j, int* contador, char linea[], char Dato
 void limpiarDatos(char Datos[6][200]);
 void MenuAdministrador();
 void MenuUsuario();
+void altaBiciestacion();
 void MostrarLista(User*);
 void liberarMemoria(User**);
 //******************************************************************************
@@ -143,7 +155,7 @@ void MenuAdministrador() {
   scanf("%c", &Opcion);
   switch (Opcion) {
     case 'a':
-      printf("Alta de una bici-estacion\n");
+      altaBiciestacion();
       break;
     case 'b':
       printf("Baja de una bici-estacion\n");
@@ -232,5 +244,16 @@ void limpiarDatos(char Datos[6][200]){
   for(int i = 0; i < 5; i++){
     Datos[i][0] = '\0';
   }
+}
+void altaBiciestacion(){
+  FILE* Archivo;
+  Biciestacion Estacion;
+  Archivo = fopen("biciestaciones.txt", "at");
+  if (Archivo == NULL) {
+    Archivo = fopen("biciestaciones.txt", "wt");
+  }
+  system("clear");
+  printf("\t\tDar de alta una nueva biciestacion\n");
+  printf("Ingresar nombre generico: ");
 }
 //******************************************************************************
