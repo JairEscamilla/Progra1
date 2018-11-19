@@ -254,6 +254,6 @@ void altaBiciestacion(){
   }
   system("clear");
   printf("\t\tDar de alta una nueva biciestacion\n");
-  printf("Ingresar nombre generico: ");
+  printf("Ingresar nombre generico");
 }
 //******************************************************************************
