@@ -22,6 +22,7 @@ void validar_archivo_login();
 int Pedir_datos(char[], char[]);
 int iniciar_sesion(int*, char[], char[], User*);
 void leerListaUsuarios(User**);
+void separarListaUsuarios(int* i, int* j, int* contador, char linea[], char Datos[6][200]);
 void MenuAdministrador();
 void MostrarLista(User*);
 void liberarMemoria(User**);
@@ -95,12 +96,9 @@ int Pedir_datos(char Dato[], char NombreDato[]){
   Dato[i] = '\0';
   return status;
 }
-void leerListaUsuarios(User** Lista){
-  char linea[500];
-  char Datos[6][200];
-  int i;
-  int j = 0;
-  int contador = 0;
+void leerListaUsuarios(User** Lista){ 
+  char linea[500], Datos[6][200];
+  int i, j = 0, contador = 0;
   FILE* Archivo = fopen("login.txt", "rt");
   if (Archivo == NULL) {
     printf("Ha ocurrido un error, vuelva a intentar\n");
@@ -110,17 +108,7 @@ void leerListaUsuarios(User** Lista){
     User* Usuario = (User*)malloc(sizeof(User));
     i = 0;
     fgets(linea, 500, Archivo);
-    while(linea[i] != '\0'){
-      Datos[contador][j] = linea[i];
-      if(linea[i+1] == '/'){
-        Datos[contador][j+1] = '\0';
-        contador++;
-        j = -1;
-        i++;
-      }
-      i++;
-      j++;
-    }
+    separarListaUsuarios(&i, &j, &contador, linea, Datos);
     strcpy(Usuario->Nombre, Datos[0]);
     strcpy(Usuario->Direccion, Datos[1]);
     strcpy(Usuario->Contrasenia, Datos[2]);
@@ -176,5 +164,18 @@ void MenuAdministrador() {
   printf("\tf. Baja de un usuario del servicio.\n");
   printf("\tg. Salida del sistema.\n\n");
   printf("Seleccione una opcion-> ");
+}
+void separarListaUsuarios(int* i, int* j, int* contador, char linea[], char Datos[6][200]){
+  while(linea[*i] != '\0'){
+    Datos[*contador][*j] = linea[*i];
+    if(linea[*i+1] == '/'){
+      Datos[(*contador)][(*j)+1] = '\0';
+      (*contador)++;
+      (*j) = -1;
+      (*i)++;
+    }
+    (*i)++;
+    (*j)++;
+  }
 }
 //******************************************************************************
