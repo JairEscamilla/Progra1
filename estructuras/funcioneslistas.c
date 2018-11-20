@@ -7,6 +7,7 @@ typedef struct defElemento{
 void InsertaInicio(TipoElemento** Inicio, int numero);
 void imprime(TipoElemento* Inicio);
 void BorrarLista(TipoElemento* Inicio);
+void InsertaDerecha(TipoElemento**, int);
 
 void InsertaInicio(TipoElemento** Inicio, int numero){
   TipoElemento* temp;
@@ -22,6 +23,22 @@ void imprime(TipoElemento* Inicio){
     printf("%d, ", temp->dato);
     temp = temp->siguiente;
   }
+}
+
+void InsertaDerecha(TipoElemento** Inicio, int numero) {
+  TipoElemento* temp;
+  TipoElemento* temp2;
+  temp = (TipoElemento*)malloc(sizeof(TipoElemento));
+  temp->dato = numero;
+  temp->siguiente = NULL;
+  if (*Inicio != NULL) {
+    temp2 = *Inicio;
+    while (temp2->siguiente != NULL) {
+      temp2 = temp2->siguiente;
+    }
+    temp2->siguiente = temp;
+  }else
+    *Inicio = temp;
 }
 
 void BorrarLista(TipoElemento* Inicio){
