@@ -8,7 +8,7 @@ void InsertaInicio(TipoElemento** Inicio, int numero);
 void imprime(TipoElemento* Inicio);
 void BorrarLista(TipoElemento* Inicio);
 void InsertaDerecha(TipoElemento**, int);
-float calcularPromedio(TipoElemento**);
+float calcularPromedio(TipoElemento*);
 
 void InsertaInicio(TipoElemento** Inicio, int numero){
   TipoElemento* temp;
@@ -26,8 +26,8 @@ void imprime(TipoElemento* Inicio){
   }
 }
 
-float calcularPromedio(TipoElemento** Lista){
-  TipoElemento* Aux = *Lista;
+float calcularPromedio(TipoElemento* Lista){
+  TipoElemento* Aux = Lista;
   float counter = 0, counter2 = 0;
   float promedio;
   while (Aux->siguiente != NULL) {
@@ -77,6 +77,6 @@ int main(){
   printf("Los valores introducidos son: \n");
   imprime(lista);
   printf("\n");
-  printf("El promedio es %f\n", calcularPromedio(&lista));
+  printf("El promedio es %f\n", calcularPromedio(lista));
   BorrarLista(lista);
 }
