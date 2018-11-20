@@ -30,13 +30,11 @@ float calcularPromedio(TipoElemento* Lista){
   TipoElemento* Aux = Lista;
   float counter = 0, counter2 = 0;
   float promedio;
-  while (Aux->siguiente != NULL) {
+  while (Aux != NULL) {
     counter += Aux->dato;
     counter2++;
     Aux = Aux->siguiente;
   }
-  counter+= Aux->dato;
-  counter2++;
   promedio = counter/counter2;
   return promedio;
 }
