@@ -9,6 +9,7 @@ void imprime(TipoElemento* Inicio);
 void BorrarLista(TipoElemento* Inicio);
 void InsertaDerecha(TipoElemento**, int);
 float calcularPromedio(TipoElemento*);
+int buscar(int, TipoElemento*);
 
 void InsertaInicio(TipoElemento** Inicio, int numero){
   TipoElemento* temp;
@@ -26,6 +27,18 @@ void imprime(TipoElemento* Inicio){
   }
 }
 
+int buscar(int numero, TipoElemento* Inicio){
+  TipoElemento* aux = Inicio;
+  int flag = 0;
+  while (aux != NULL) {
+    if(aux->dato == numero){
+      flag = 1;
+      aux = NULL;
+    }else
+      aux = aux->siguiente;
+  }
+  return flag;
+}
 float calcularPromedio(TipoElemento* Lista){
   TipoElemento* Aux = Lista;
   float counter = 0, counter2 = 0;
@@ -68,6 +81,7 @@ void BorrarLista(TipoElemento* Inicio){
 int main(){
   TipoElemento* lista = NULL;
   int valor;
+  int num;
   printf("Inserte numeros, letra para terminar: ");
   while (scanf("%d", &valor) == 1) {
     InsertaInicio(&lista, valor);
@@ -76,5 +90,13 @@ int main(){
   imprime(lista);
   printf("\n");
   printf("El promedio es %f\n", calcularPromedio(lista));
+  printf("Ingresar numero a buscar: ");
+  __fpurge(stdin);
+  scanf("%d", &num);
+  if (buscar(num, lista)) {
+    printf("El numero si se encuentra en la lista\n");
+  }else{
+    printf("El numero NO se encuentra en la lista\n");
+  }
   BorrarLista(lista);
 }
