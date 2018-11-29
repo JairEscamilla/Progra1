@@ -42,32 +42,32 @@ void imprimir(TipoDato* Lista){
     aux = aux->siguiente;
   }
 }
-void ordenar(TipoDato** Lista){
-  TipoDato* aux, *aux2, *aux3, *anterior;
-  if (*Lista != NULL) {
-    aux = *Lista;
-    aux2 = *Lista;
-    aux3 = *Lista;
-    anterior = *Lista;
-    aux2 = aux2->siguiente;
-    while (aux != NULL) {
-      if (aux != NULL && aux3->dato > aux->dato) {
-        if(anterior == *Lista)
-          *Lista = aux;
-        if(aux->siguiente == NULL)
-          aux3->siguiente = NULL;
-        else
-          aux3->siguiente = aux->siguiente;
-        aux->siguiente = aux3;
-        printf("Antes\n");
-        anterior->siguiente = aux;
-        printf("%d\n", anterior->siguiente->dato);
-        printf("Despues\n");
-
+void ordenar(TipoDato** Inicio){
+  TipoDato* anterior, *temp, *siguiente, *temp2;
+  if (*Inicio != NULL) {
+    anterior = *Inicio;
+    temp2 = anterior;
+    temp = anterior->siguiente;
+    siguiente = temp;
+    while (temp != NULL) {
+      if(anterior->dato > temp->dato){
+        if(*Inicio == anterior){
+          *Inicio = temp;
+          anterior->siguiente = temp->siguiente;
+          temp2 = temp;
+          temp->siguiente = anterior;
+          temp = anterior->siguiente;
+        }else{
+          anterior->siguiente = temp->siguiente;
+          temp->siguiente = anterior;
+          temp2->siguiente = temp;
+          temp = anterior->siguiente;
+          temp2 = temp2->siguiente;
+        }
+      }else{
+        temp = temp->siguiente;
       }
-      anterior = aux;
-      aux = aux->siguiente;
     }
-    ordenar(&aux2);
+    ordenar(&siguiente);
   }
 }
