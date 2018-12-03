@@ -30,7 +30,7 @@ typedef struct defBiciestacion{
 // Prototipos de las funciones
 //******************************************************************************
 void validar_archivo_login();
-int Pedir_datos(char[], char[]);
+int Pedir_datos(char[], char[], int);
 int iniciar_sesion(int*, char[], char[], User*);
 void leerListaUsuarios(User**);
 void separarListaUsuarios(int* i, int* j, int* contador, char linea[], char Datos[6][200]);
@@ -38,6 +38,8 @@ void limpiarDatos(char Datos[6][200]);
 void MenuAdministrador();
 void MenuUsuario();
 void altaBiciestacion();
+int ValidarCaracteres(char[], char[]);
+int validarNumeros(char[], char[]);
 void MostrarLista(User*);
 void liberarMemoria(User**);
 //******************************************************************************
@@ -54,10 +56,11 @@ int main(int argc, char *argv[]) {
     printf("Esto se va a desarrollar despues\n");
   }else{
     validar_archivo_login();
-    while(Pedir_datos(Nombre, "nombre"));
-    while(Pedir_datos(Password, "password"));
+    system("clear");
+    while(Pedir_datos(Nombre, "nombre", 50));
+    system("clear");
+    while(Pedir_datos(Password, "password", 50));
     leerListaUsuarios(&ListaUsuarios);
-  //  MostrarLista(ListaUsuarios);
     if(iniciar_sesion(&TipoUsuario, Nombre, Password, ListaUsuarios)){
       if (TipoUsuario == 1) {
         MenuAdministrador();
@@ -94,17 +97,17 @@ void validar_archivo_login(){
     fclose(Archivo);
   }
 }
-int Pedir_datos(char Dato[], char NombreDato[]){
-  system("clear");
+int Pedir_datos(char Dato[], char NombreDato[], int longitud){
+  __fpurge(stdin);
   int i = 0;
   int status = 0;
   printf("Ingresar %s: ", NombreDato);
   i = 0;
   while ((Dato[i] = getchar()) != '\n' && status == 0) {
-    if (i > 50) {
-      printf("Haz sobrepasado el limite de caracteres!\nPresione enter para volver a intentar");
-      getchar();
-      __fpurge(stdin);
+    if (i > longitud) {
+     printf("Haz sobrepasado el limite de caracteres!\n");
+    //  __fpurge(stdin);
+    //  getchar();
       Dato[i+1] = '\n';
       status = 1;
     }
@@ -206,7 +209,6 @@ void leerListaUsuarios(User** Lista){
     i = 0;
     contador = 0;
     separarListaUsuarios(&i, &j, &contador, linea, Datos);
-  //  printf("%s\n\n", Datos[0]);
     strcpy(Usuario->Nombre, Datos[0]);
     strcpy(Usuario->Direccion, Datos[1]);
     strcpy(Usuario->Contrasenia, Datos[2]);
@@ -223,7 +225,6 @@ void leerListaUsuarios(User** Lista){
       }
       aux->siguiente = Usuario;
     }
-    //limpiarDatos(Datos);
   }
 }
 void separarListaUsuarios(int* i, int* j, int* contador, char linea[], char Datos[6][200]){
@@ -245,15 +246,71 @@ void limpiarDatos(char Datos[6][200]){
     Datos[i][0] = '\0';
   }
 }
+
 void altaBiciestacion(){
   FILE* Archivo;
   Biciestacion Estacion;
+  char numero[3], cp[5], error[50];
+  int validacion = 1;
+  error[0] = '\0';
   Archivo = fopen("biciestaciones.txt", "at");
   if (Archivo == NULL) {
     Archivo = fopen("biciestaciones.txt", "wt");
   }
   system("clear");
   printf("\t\tDar de alta una nueva biciestacion\n");
-  printf("Ingresar nombre generico");
+  while(Pedir_datos(Estacion.NombreGenerico, "nombre generico de biciestacion", 100));
+  while(Pedir_datos(Estacion.Calle, "calle de la biciestacion", 50));
+  while(validacion){
+    validacion = Pedir_datos(numero, "numero (numeracion de la calle)", 3);
+    validacion = validarNumeros(numero, error);
+    if(strlen(error) != 0)
+      puts(error);
+    error[0] = '\0';
+  }
+  validacion = 1;
+  while(validacion){
+    validacion = Pedir_datos(cp, "codigo postal", 5);
+    validacion = validarNumeros(cp, error);
+    if(strlen(cp) != 5){
+      printf("Este campo solo admite 5 caracteres\n");
+      validacion = 1;
+    }
+    if(strlen(error) != 0)
+      puts(error);
+    error[0] = '\0';
+  }
+  validacion = 1;
+  while(validacion){
+    validacion = Pedir_datos(Estacion.Ciudad, "ciudad", 50);
+    validacion = ValidarCaracteres(Estacion.Ciudad, error);
+    if(strlen(error) != 0)
+      puts(error);
+    error[0] = '\0';
+  }
+}
+int ValidarCaracteres(char Cadena[], char Error[]){
+  int i = 0;
+  int Status = 0;
+  while(Cadena[i] != '\0' && Status == 0){
+    if(!(Cadena[i] >= 'a' && Cadena[i] <= 'z') && !(Cadena[i] >= 'A' && Cadena[i] <= 'Z')){
+      Status = 1;
+      strcpy(Error, "Este campo solamente admite letras\n");
+    }
+    i++;
+  }
+  return Status;
+}
+int validarNumeros(char Cadena[], char Error[]){
+  int i = 0;
+  int Status = 0;
+  while(Cadena[i] != '\0' && Status == 0){
+    if(!(Cadena[i] >= '0' && Cadena[i] <= '9')){
+      Status = 1;
+      strcpy(Error, "Este campo solo puede contener numeros\n");
+    }
+    i++;
+  }
+  return Status;
 }
 //******************************************************************************
