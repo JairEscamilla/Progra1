@@ -33,14 +33,17 @@ void validar_archivo_login();
 int Pedir_datos(char[], char[], int);
 int iniciar_sesion(int*, char[], char[], User*);
 void leerListaUsuarios(User**);
+void cargarListaBiciestacion(Biciestacion**);
 void separarListaUsuarios(int* i, int* j, int* contador, char linea[], char Datos[6][200]);
 void limpiarDatos(char Datos[6][200]);
-void MenuAdministrador();
+void MenuAdministrador(Biciestacion**);
 void MenuUsuario();
-void altaBiciestacion();
+void altaBiciestacion(Biciestacion**);
 int ValidarCaracteres(char[], char[]);
 int validarNumeros(char[], char[]);
+void anadirBiciestacion(int, char[], char[], char[], char[], char[], Biciestacion**);
 void MostrarLista(User*);
+void imprimirArchivos(Biciestacion**);
 void liberarMemoria(User**);
 //******************************************************************************
 
@@ -52,6 +55,8 @@ int main(int argc, char *argv[]) {
   char Nombre[50];
   char Password[50];
   User* ListaUsuarios = NULL;
+  Biciestacion* ListaBiciestacion = NULL;
+  cargarListaBiciestacion(&ListaBiciestacion);
   if (argc != 1) {
     printf("Esto se va a desarrollar despues\n");
   }else{
@@ -63,7 +68,7 @@ int main(int argc, char *argv[]) {
     leerListaUsuarios(&ListaUsuarios);
     if(iniciar_sesion(&TipoUsuario, Nombre, Password, ListaUsuarios)){
       if (TipoUsuario == 1) {
-        MenuAdministrador();
+        MenuAdministrador(&ListaBiciestacion);
       }
       if (TipoUsuario == 0) {
         MenuUsuario();
@@ -145,7 +150,7 @@ int iniciar_sesion(int* TipoUsuario, char Nombre[], char Password[], User* Lista
   }while ((aux != NULL) && ((strcmp(Nombre, aux->Nombre) == 0) && (strcmp(Password, aux->Contrasenia) == 0)));
   return inicio;
 }
-void MenuAdministrador() {
+void MenuAdministrador(Biciestacion** Lista) {
   system("clear");
   char Opcion;
   printf("Ha iniciado sesion correctamente\n\n");
@@ -160,7 +165,7 @@ void MenuAdministrador() {
   scanf("%c", &Opcion);
   switch (Opcion) {
     case 'a':
-      altaBiciestacion();
+      altaBiciestacion(Lista);
       break;
     case 'b':
       printf("Baja de una bici-estacion\n");
@@ -179,6 +184,7 @@ void MenuAdministrador() {
       break;
     case 'g':
       printf("Hasta pronto\nVuelva pronto\n");
+      imprimirArchivos(Lista);
       exit(0);
       break;
     default:
@@ -188,7 +194,7 @@ void MenuAdministrador() {
   printf("Presiona enter para volver al menu...");
   __fpurge(stdin);
   getchar();
-  MenuAdministrador();
+  MenuAdministrador(Lista);
 }
 void MenuUsuario(){
   system("clear");
@@ -249,20 +255,20 @@ void limpiarDatos(char Datos[6][200]){
   }
 }
 
-void altaBiciestacion(){
+void altaBiciestacion(Biciestacion** Lista){
   FILE* Archivo;
-  Biciestacion Estacion;
-  char numero[3], cp[5], error[50], renglon[100], basura[100];
+  Biciestacion Estacion, *auxiliar = *Lista;
+  char numero[3], cp[5], error[50], renglon[500], basura[100];
   int validacion = 1, id = 0;
   error[0] = '\0';
+  numero[0] = '\0';
   Archivo = fopen("biciestaciones.txt", "rt");
   if (Archivo == NULL) {
     id = 1;
   }else{
-    while(fgets(renglon, 100, Archivo) != NULL)
-      sscanf(renglon, "%d/%s/", &id, basura);
-    id++;
-    fclose(Archivo);
+    while(auxiliar->siguiente != NULL)
+      auxiliar = auxiliar->siguiente;
+    id = auxiliar->NumBiciestacion +1;
   }
   Archivo = fopen("biciestaciones.txt", "at");
   system("clear");
@@ -296,7 +302,8 @@ void altaBiciestacion(){
       puts(error);
     error[0] = '\0';
   }
-  fprintf(Archivo, "%d/%s/%s/%s/%s/%s/\n", id, Estacion.NombreGenerico, Estacion.Calle, numero, cp, Estacion.Ciudad);
+  //fprintf(Archivo, "%d/%s/%s/%s/%s/%s/\n", id, Estacion.NombreGenerico, Estacion.Calle, numero, cp, Estacion.Ciudad);
+  anadirBiciestacion(id, Estacion.NombreGenerico, Estacion.Calle, numero, cp, Estacion.Ciudad, Lista);
   fclose(Archivo);
 }
 int ValidarCaracteres(char Cadena[], char Error[]){
@@ -322,5 +329,67 @@ int validarNumeros(char Cadena[], char Error[]){
     i++;
   }
   return Status;
+}
+void cargarListaBiciestacion(Biciestacion** Lista){
+  char linea[500], Datos[6][200];
+  int i, j = 0, contador = 0;
+  FILE* Archivo = fopen("biciestaciones.txt", "rt");
+  if (Archivo == NULL) {
+    printf("Ha ocurrido un error, vuelva a intentar\n");
+  }else{
+    while (fgets(linea, 500, Archivo) != NULL) {
+      Biciestacion* Nueva = (Biciestacion*)malloc(sizeof(Biciestacion));
+      i = 0;
+      contador = 0;
+      separarListaUsuarios(&i, &j, &contador, linea, Datos);
+      Nueva->NumBiciestacion = atoi(Datos[0]);
+      strcpy(Nueva->NombreGenerico, Datos[1]);
+      strcpy(Nueva->Calle, Datos[2]);
+      Nueva->Numero = atoi(Datos[3]);
+      Nueva->CP = atoi(Datos[4]);
+      strcpy(Nueva->Ciudad, Datos[5]);
+      Nueva->siguiente = NULL;
+      if (*Lista == NULL) {
+        *Lista = Nueva;
+      }else{
+        Biciestacion* aux = *Lista;
+        while (aux->siguiente != NULL) {
+          aux = aux->siguiente;
+        }
+        aux->siguiente = Nueva;
+      }
+    }
+  }
+}
+void anadirBiciestacion(int id, char NombreGenerico[], char Calle[], char numero[], char cp[], char Ciudad[], Biciestacion** Lista){
+  Biciestacion* Nueva = (Biciestacion*)malloc(sizeof(Biciestacion));
+  Biciestacion* aux;
+  Nueva->NumBiciestacion = id;
+  strcpy(Nueva->NombreGenerico, NombreGenerico);
+  strcpy(Nueva->Calle, Calle);
+  Nueva->Numero = atoi(numero);
+  Nueva->CP = atoi(cp);
+  strcpy(Nueva->Ciudad, Ciudad);
+  Nueva->siguiente = NULL;
+  if (*Lista == NULL) {
+    *Lista = Nueva;
+  }else{
+    aux = *Lista;
+    while (aux->siguiente != NULL) {
+      aux = aux->siguiente;
+    }
+    aux->siguiente = Nueva;
+  }
+}
+void imprimirArchivos(Biciestacion** ListaBicis){
+  Biciestacion* aux = *ListaBicis;
+  if(*ListaBicis == NULL)
+  printf("Ya valio");
+  FILE* Archivo = fopen("biciestaciones.txt", "wt");
+  while (aux != NULL) {
+    fprintf(Archivo, "%ld/%s/%s/%d/%d/%s/\n", aux->NumBiciestacion, aux->NombreGenerico, aux->Calle, aux->Numero, aux->CP, aux->Ciudad);
+    aux = aux->siguiente;
+  }
+  fclose(Archivo);
 }
 //******************************************************************************
