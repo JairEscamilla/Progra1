@@ -106,8 +106,6 @@ int Pedir_datos(char Dato[], char NombreDato[], int longitud){
   while ((Dato[i] = getchar()) != '\n' && status == 0) {
     if (i > longitud) {
      printf("Haz sobrepasado el limite de caracteres!\n");
-    //  __fpurge(stdin);
-    //  getchar();
       Dato[i+1] = '\n';
       status = 1;
     }
@@ -250,13 +248,19 @@ void limpiarDatos(char Datos[6][200]){
 void altaBiciestacion(){
   FILE* Archivo;
   Biciestacion Estacion;
-  char numero[3], cp[5], error[50];
-  int validacion = 1;
+  char numero[3], cp[5], error[50], renglon[100], basura[100];
+  int validacion = 1, id = 0;
   error[0] = '\0';
-  Archivo = fopen("biciestaciones.txt", "at");
+  Archivo = fopen("biciestaciones.txt", "rt");
   if (Archivo == NULL) {
-    Archivo = fopen("biciestaciones.txt", "wt");
+    id = 1;
+  }else{
+    while(fgets(renglon, 100, Archivo) != NULL)
+      sscanf(renglon, "%d/%s/", &id, basura);
+    id++;
+    fclose(Archivo);
   }
+  Archivo = fopen("biciestaciones.txt", "at");
   system("clear");
   printf("\t\tDar de alta una nueva biciestacion\n");
   while(Pedir_datos(Estacion.NombreGenerico, "nombre generico de biciestacion", 100));
@@ -273,7 +277,7 @@ void altaBiciestacion(){
     validacion = Pedir_datos(cp, "codigo postal", 5);
     validacion = validarNumeros(cp, error);
     if(strlen(cp) != 5){
-      printf("Este campo solo admite 5 caracteres\n");
+      printf("Este campo se compone de solo 5 caracteres\n");
       validacion = 1;
     }
     if(strlen(error) != 0)
@@ -288,6 +292,8 @@ void altaBiciestacion(){
       puts(error);
     error[0] = '\0';
   }
+  fprintf(Archivo, "%d/%s/%s/%s/%s/%s/\n", id, Estacion.NombreGenerico, Estacion.Calle, numero, cp, Estacion.Ciudad);
+  fclose(Archivo);
 }
 int ValidarCaracteres(char Cadena[], char Error[]){
   int i = 0;
