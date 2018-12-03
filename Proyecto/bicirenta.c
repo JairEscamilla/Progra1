@@ -111,6 +111,10 @@ int Pedir_datos(char Dato[], char NombreDato[], int longitud){
     }
     i++;
   }
+  if(i == 0){
+    printf("Asegurate de escribir algo!\n");
+    status = 1;
+  }
   Dato[i] = '\0';
   return status;
 }
