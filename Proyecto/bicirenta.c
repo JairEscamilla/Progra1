@@ -57,6 +57,8 @@ void anadirBici(int, char[], Bicicleta**, Biciestacion**);
 void anadirUsuario(int, char[], char[], char[], char[], char[], User**);
 void MostrarLista(User*);
 void imprimirArchivos(Biciestacion**, Bicicleta**, User**);
+void reasignarBicis(Bicicleta**, Biciestacion**);
+void reasignar(char[], char[], Bicicleta**, Biciestacion**);
 void liberarMemoria(User**);
 //******************************************************************************
 
@@ -194,7 +196,7 @@ void MenuAdministrador(Biciestacion** ListaBiciestaciones, Bicicleta** ListaBici
       printf("Mostrar estatus\n");
       break;
     case 'e':
-      printf("Alta de un usuario\n");
+      reasignarBicis(ListaBicis, ListaBiciestaciones);
       break;
     case 'f':
       printf("Baja de un usuario\n");
@@ -606,6 +608,64 @@ void anadirUsuario(int id, char Nombre[], char Direccion[], char Contrasenia[], 
     aux->siguiente = Nuevo;
   }
   printf("Se ha añadido con exito el usuario\n");
+}
+void reasignarBicis(Bicicleta** ListaBicis, Biciestacion** ListaBiciestaciones){
+  system("clear");
+  printf("\t\tReasignar Bicis entre Biciestaciones\n\n");
+  Biciestacion* aux = *ListaBiciestaciones;
+  Bicicleta* aux2 = *ListaBicis;
+  char Numero[4], NumBici[4], error[100];
+  int validacion = 1, validacion2 = 1;
+  while(aux2 != NULL){
+    printf("Numero de bici: %ld. Pertenece a biciestacion numero: %ld\n", aux2->NumeroBici, aux2->Biciestacion);
+    aux2 = aux2->siguiente;
+  }
+  while(validacion || validacion2){
+    validacion = Pedir_datos(Numero, "numero de bicicleta: ", 3);
+    validacion2= validarNumeros(Numero, error);
+    if(strlen(error) != 0)
+      puts(error);
+    error[0] = '\0';
+  }
+  validacion = 1;
+  validacion2 = 1;
+  while(validacion || validacion2){
+    validacion = Pedir_datos(NumBici, "numero de biciestacion a la que se desea reasignar la bicicleta", 3);
+    validacion2= validarNumeros(NumBici, error);
+    if(strlen(error) != 0)
+      puts(error);
+    error[0] = '\0';
+  }
+  reasignar(Numero, NumBici, ListaBicis, ListaBiciestaciones);
+}
+void reasignar(char Numero[],char NumBici[],Bicicleta** ListaBicis,Biciestacion** ListaBiciestaciones){
+  Biciestacion* aux = *ListaBiciestaciones;
+  Bicicleta* aux2 = *ListaBicis, *aux3 = *ListaBicis;
+  int found = 0, cantidadBicis = 0;
+  while(aux != NULL){
+    if(aux->NumBiciestacion == atoi(NumBici))
+      found = 1;
+    aux = aux->siguiente;
+  }
+  if(found == 0)
+    printf("No se puede realizar la reasignacion debido a que el numero de biciestacion seleccionada, no existe\n");
+  else{
+    while(aux2 != NULL){
+      if(aux2->Biciestacion == atoi(NumBici))
+        cantidadBicis++;
+      aux2 = aux2->siguiente;
+    }
+    if(cantidadBicis >= 10){
+      printf("No se puede realizar la reasignacion debido a que la biciestacion seleccionada se encuentra llena\n");
+    }else{
+      while(aux3 != NULL){
+        if(aux3->NumeroBici == atoi(Numero))
+          aux3->Biciestacion = atoi(NumBici);
+        aux3 = aux3->siguiente;
+      }
+      printf("Reasignacion completada con exito\n");
+    }
+  }
 }
 void imprimirArchivos(Biciestacion** ListaBicis, Bicicleta** ListaBicicletas, User** ListaUsuarios){
   Biciestacion* aux = *ListaBicis;
