@@ -24,6 +24,14 @@ typedef struct defBiciestacion{
   char Ciudad[50];
   struct defBiciestacion* siguiente;
 }Biciestacion;
+
+typedef struct defBici{
+  long Numero;
+  long Biciestacion;
+  long rentas;
+  char Timestamp[50];
+  struct defBici* siguiente;
+}Bicicleta;
 //******************************************************************************
 
 
