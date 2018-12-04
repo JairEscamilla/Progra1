@@ -347,7 +347,6 @@ void altaBici(Bicicleta** Lista, Biciestacion** ListaBiciestaciones){
   system("clear");
   printf("\t\tDar de alta una nueva bicicleta\n");
   printf("\n");
-  printf("%d\n", id);
   while(LBiciestaciones != NULL){
     printf("\t%ld-> %s\n", LBiciestaciones->NumBiciestacion, LBiciestaciones->NombreGenerico);
     LBiciestaciones = LBiciestaciones->siguiente;
@@ -472,7 +471,7 @@ void anadirBici(int id, char NumeroBici[], Bicicleta** Lista, Biciestacion** Lis
       ListaBicis = ListaBicis->siguiente;
     }
     if(CuentaBici > 10)
-      printf("No se puede agregar la Bici a la biciestacion seleccionada, ya que se ecnuentra llena\n");
+      printf("No se puede agregar la Bici a la biciestacion seleccionada, ya que se encuentra llena\n");
     else{
       if (*Lista == NULL) {
         *Lista = Nueva;
