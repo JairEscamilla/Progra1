@@ -30,6 +30,7 @@ typedef struct defBici{
   long Biciestacion;
   long rentas;
   char Timestamp[50];
+  int esrentada;
   struct defBici* siguiente;
 }Bicicleta;
 //******************************************************************************
@@ -59,6 +60,7 @@ void MostrarLista(User*);
 void imprimirArchivos(Biciestacion**, Bicicleta**, User**);
 void reasignarBicis(Bicicleta**, Biciestacion**);
 void reasignar(char[], char[], Bicicleta**, Biciestacion**);
+void status(Biciestacion**);
 void liberarMemoria(User**);
 //******************************************************************************
 
@@ -538,6 +540,7 @@ void anadirBici(int id, char NumeroBici[], Bicicleta** Lista, Biciestacion** Lis
   Nueva->rentas = 0;
   strcpy(Nueva->Timestamp, "NULL");
   Nueva->Biciestacion = numeroBiciestacion;
+  Nueva->esrentada = 0;
   Nueva->siguiente = NULL;
   while(aux != NULL){
     if(Nueva->Biciestacion == aux->NumBiciestacion)
@@ -679,7 +682,7 @@ void imprimirArchivos(Biciestacion** ListaBicis, Bicicleta** ListaBicicletas, Us
   fclose(Archivo);
   Archivo = fopen("bicis.txt", "wt");
   while(aux2 != NULL){
-    fprintf(Archivo, "%ld/%ld/%ld/%s/x/x/\n", aux2->NumeroBici, aux2->Biciestacion, aux2->rentas, aux2->Timestamp);
+    fprintf(Archivo, "%ld/%ld/%ld/%s/%d/x/\n", aux2->NumeroBici, aux2->Biciestacion, aux2->rentas, aux2->Timestamp, aux2->esrentada);
     aux2 = aux2->siguiente;
   }
   fclose(Archivo);
