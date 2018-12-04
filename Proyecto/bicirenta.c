@@ -60,7 +60,8 @@ void MostrarLista(User*);
 void imprimirArchivos(Biciestacion**, Bicicleta**, User**);
 void reasignarBicis(Bicicleta**, Biciestacion**);
 void reasignar(char[], char[], Bicicleta**, Biciestacion**);
-void status(Biciestacion**);
+void status(Biciestacion**, Bicicleta**);
+int obtenerNumerorentas(int, Bicicleta**);
 void liberarMemoria(User**);
 //******************************************************************************
 
@@ -201,7 +202,7 @@ void MenuAdministrador(Biciestacion** ListaBiciestaciones, Bicicleta** ListaBici
       reasignarBicis(ListaBicis, ListaBiciestaciones);
       break;
     case 'f':
-      printf("Baja de un usuario\n");
+      status(ListaBiciestaciones, ListaBicis);
       break;
     case 'g':
       altaUsuarios(ListaUsuarios);
@@ -319,7 +320,7 @@ void altaBiciestacion(Biciestacion** Lista){
       validacion = 1;
     }
     if(strlen(error) != 0)
-      puts(error);
+      printf("Este campo solo puede contener numeros\n");
     error[0] = '\0';
   }
 
@@ -669,6 +670,42 @@ void reasignar(char Numero[],char NumBici[],Bicicleta** ListaBicis,Biciestacion*
       printf("Reasignacion completada con exito\n");
     }
   }
+}
+void status(Biciestacion** ListaBiciestaciones, Bicicleta** ListaBicis){
+  Biciestacion* aux = *ListaBiciestaciones;
+  int Numrenta = 0, lugaresDisponibles = 0;
+  system("clear");
+  printf("\t\tEstatus de biciestaciones\n");
+  for(int i = 0; i < 74; i++){
+    printf("*");
+  }
+  printf("\n");
+  printf("N.Biciestacion*                Nombre generico                   *B.D*L.D*\n");
+  for(int i = 0; i < 74; i++){
+    printf("*");
+  }
+  printf("\n");
+  while(aux != NULL){
+    Numrenta = obtenerNumerorentas(aux->NumBiciestacion, ListaBicis);
+    lugaresDisponibles = 10 - Numrenta;
+    printf("%8ld      *%-50s*%2d *%3d*\n", aux->NumBiciestacion, aux->NombreGenerico, Numrenta, lugaresDisponibles);
+    for(int i = 0; i < 74; i++){
+      printf("*");
+    }
+    printf("\n");
+    aux = aux->siguiente;
+  }
+  printf("\n\nB.D = Bicis Disponibles para Renta\nL.D = Lugares Disponible para Estacionarse\n");
+}
+int obtenerNumerorentas(int numeroBiciestacion, Bicicleta** ListaBicis){
+  Bicicleta* aux = *ListaBicis;
+  int numeroRentas = 0;
+  while(aux != NULL){
+    if(aux->Biciestacion == numeroBiciestacion && aux->esrentada == 0)
+      numeroRentas++;
+    aux = aux->siguiente;
+  }
+  return numeroRentas;
 }
 void imprimirArchivos(Biciestacion** ListaBicis, Bicicleta** ListaBicicletas, User** ListaUsuarios){
   Biciestacion* aux = *ListaBicis;
