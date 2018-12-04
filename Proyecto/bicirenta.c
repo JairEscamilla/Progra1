@@ -63,9 +63,8 @@ void reasignar(char[], char[], Bicicleta**, Biciestacion**);
 void status(Biciestacion**, Bicicleta**);
 int obtenerNumerorentas(int, Bicicleta**);
 void liberarMemoria(User**);
+void Usu(User**);
 //******************************************************************************
-
-
 // Funcion principal
 //******************************************************************************
 int main(int argc, char *argv[]) {
@@ -78,7 +77,49 @@ int main(int argc, char *argv[]) {
   cargarListaBiciestacion(&ListaBiciestacion);
   cargarListaBicis(&ListaBicis);
   if (argc != 1) {
-    printf("Esto se va a desarrollar despues.");
+    if (!strcmp(argv[1], "-c")) {
+      system("clear");
+    system("sleep 0.1");
+    printf("=================================================================\n");
+    system("sleep 0.1");
+    printf("d88888b  .o88b.  .d88b.         d8888b. d888888b  .o88b. d888888b\n");
+    system("sleep 0.1");
+    printf("88'     d8P  Y8 .8P  Y8.        88  `8D   `88'   d8P  Y8   `88'  \n");
+    system("sleep 0.1");
+    printf("88ooooo 8P      88    88        88oooY'    88    8P         88   \n");
+    system("sleep 0.1");
+    printf("88ooooo 8b      88    88        88ooob.    88    8b         88   \n");
+    system("sleep 0.1");
+    printf("88.     Y8b  d8 `8b  d8'        88   8D   .88.   Y8b  d8   .88.  \n");
+    system("sleep 0.1");
+    printf("Y88888P  `Y88P'  `Y88P'         Y8888P' Y888888P  `Y88P' Y888888P\n");
+    system("sleep 0.1");
+    printf("=================================================================\n");
+    system("sleep 0.1");
+    printf("==================     Desarrollado por      ====================\n");
+    system("sleep 0.1");
+    printf("==================      Jair Escamilla       ====================\n");
+    system("sleep 0.1");
+    printf("==================      Daniel Logvin        ====================\n");
+    system("sleep 0.1");
+    printf("==================      Carlos Iturralde     ====================\n");
+    system("sleep 0.1");
+    printf("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+    system("sleep 0.1");
+    exit(0);
+  }
+
+  if(!strcmp(argv[1], "-h")){
+    printf("Comandos disponibles: \n");
+    printf(" $ bici.exe -h (Despliega el menú de ayuda al usuario)\n");
+    printf(" $ bici.exe -c (Despliega los créditos de los desarrolladores del sistema.)\n");
+    printf(" $ bici.exe -usu (Despliega el listado de todos los usuarios del servicio catalogados.)\n");
+  }
+
+  if(!strcmp(argv[1], "-usu")){
+    MostrarLista(&ListaUsuarios);
+    printf("============================\n");
+  }
   }else{
     validar_archivo_login();
     system("clear");
@@ -102,7 +143,6 @@ int main(int argc, char *argv[]) {
   return 0;
 }
 //******************************************************************************
-
 // Desarrollo de las funciones
 //******************************************************************************
 void validar_archivo_login(){
