@@ -45,14 +45,16 @@ void cargarListaBiciestacion(Biciestacion**);
 void cargarListaBicis(Bicicleta**);
 void separarListaUsuarios(int* i, int* j, int* contador, char linea[], char Datos[6][200]);
 void limpiarDatos(char Datos[6][200]);
-void MenuAdministrador(Biciestacion**);
+void MenuAdministrador(Biciestacion**, Bicicleta**);
 void MenuUsuario();
 void altaBiciestacion(Biciestacion**);
+void altaBici(Bicicleta**, Biciestacion**);
 int ValidarCaracteres(char[], char[]);
 int validarNumeros(char[], char[]);
 void anadirBiciestacion(int, char[], char[], char[], char[], char[], Biciestacion**);
+void anadirBici(int, char[], Bicicleta**, Biciestacion**);
 void MostrarLista(User*);
-void imprimirArchivos(Biciestacion**);
+void imprimirArchivos(Biciestacion**, Bicicleta**);
 void liberarMemoria(User**);
 //******************************************************************************
 
@@ -79,7 +81,7 @@ int main(int argc, char *argv[]) {
     leerListaUsuarios(&ListaUsuarios);
     if(iniciar_sesion(&TipoUsuario, Nombre, Password, ListaUsuarios)){
       if (TipoUsuario == 1) {
-        MenuAdministrador(&ListaBiciestacion);
+        MenuAdministrador(&ListaBiciestacion, &ListaBicis);
       }
       if (TipoUsuario == 0) {
         MenuUsuario();
@@ -161,7 +163,7 @@ int iniciar_sesion(int* TipoUsuario, char Nombre[], char Password[], User* Lista
   }while ((aux != NULL) && ((strcmp(Nombre, aux->Nombre) == 0) && (strcmp(Password, aux->Contrasenia) == 0)));
   return inicio;
 }
-void MenuAdministrador(Biciestacion** Lista) {
+void MenuAdministrador(Biciestacion** ListaBiciestaciones, Bicicleta** ListaBicis) {
   system("clear");
   char Opcion;
   printf("Ha iniciado sesion correctamente\n\n");
@@ -178,13 +180,13 @@ void MenuAdministrador(Biciestacion** Lista) {
   scanf("%c", &Opcion);
   switch (Opcion) {
     case 'a':
-      altaBiciestacion(Lista);
+      altaBiciestacion(ListaBiciestaciones);
       break;
     case 'b':
       printf("Baja de una bici-estacion\n");
       break;
     case 'c':
-      printf("Reasignar bicicletas\n");
+      altaBici(ListaBicis, ListaBiciestaciones);
       break;
     case 'd':
       printf("Mostrar estatus\n");
@@ -203,7 +205,7 @@ void MenuAdministrador(Biciestacion** Lista) {
       break;
     case 'i':
       printf("Hasta pronto\nVuelva pronto\n");
-      imprimirArchivos(Lista);
+      imprimirArchivos(ListaBiciestaciones, ListaBicis);
       exit(0);
       break;
     default:
@@ -213,7 +215,7 @@ void MenuAdministrador(Biciestacion** Lista) {
   printf("Presiona enter para volver al menu...");
   __fpurge(stdin);
   getchar();
-  MenuAdministrador(Lista);
+  MenuAdministrador(ListaBiciestaciones, ListaBicis);
 }
 void MenuUsuario(){
   system("clear");
@@ -273,7 +275,6 @@ void limpiarDatos(char Datos[6][200]){
     Datos[i][0] = '\0';
   }
 }
-
 void altaBiciestacion(Biciestacion** Lista){
   FILE* Archivo;
   Biciestacion Estacion, *auxiliar = *Lista;
@@ -324,6 +325,40 @@ void altaBiciestacion(Biciestacion** Lista){
     error[0] = '\0';
   }
   anadirBiciestacion(id, Estacion.NombreGenerico, Estacion.Calle, numero, cp, Estacion.Ciudad, Lista);
+  fclose(Archivo);
+}
+void altaBici(Bicicleta** Lista, Biciestacion** ListaBiciestaciones){
+  FILE* Archivo;
+  Bicicleta *auxiliar = *Lista;
+  char NumBiciestacion[4], error[100];
+  Archivo = fopen("bicis.txt", "rt");
+  int id = 0;
+  Biciestacion* LBiciestaciones = *ListaBiciestaciones;
+  int validacion = 1;
+  if (Archivo == NULL) {
+    id = 1;
+  }else{
+    while(auxiliar->siguiente != NULL)
+      auxiliar = auxiliar->siguiente;
+    id = auxiliar->NumeroBici +1;
+  }
+  Archivo = fopen("bicis.txt", "at");
+  system("clear");
+  printf("\t\tDar de alta una nueva bicicleta\n");
+  printf("\n");
+  while(LBiciestaciones != NULL){
+    printf("\t%ld-> %s\n", LBiciestaciones->NumBiciestacion, LBiciestaciones->NombreGenerico);
+    LBiciestaciones = LBiciestaciones->siguiente;
+  }
+
+  while(validacion){
+    validacion = Pedir_datos(NumBiciestacion, "de la lista anterior, el numero de biciestacion", 3);
+    validacion = validarNumeros(NumBiciestacion, error);
+    if(strlen(error) != 0)
+      puts(error);
+    error[0] = '\0';
+  }
+  anadirBici(id, NumBiciestacion, Lista, ListaBiciestaciones);
   fclose(Archivo);
 }
 int ValidarCaracteres(char Cadena[], char Error[]){
@@ -379,10 +414,9 @@ void cargarListaBiciestacion(Biciestacion** Lista){
         aux->siguiente = Nueva;
       }
     }
+    fclose(Archivo);
   }
 }
-
-
 void cargarListaBicis(Bicicleta** Lista){
   char linea[500], Datos[6][200];
   int i, j = 0, contador = 0;
@@ -412,6 +446,23 @@ void cargarListaBicis(Bicicleta** Lista){
     }
   }
 }
+void anadirBici(int id, char NumeroBici[], Bicicleta** Lista, Biciestacion** ListaBiciestaciones){
+  Bicicleta* Nueva = (Bicicleta*)malloc(sizeof(Bicicleta));
+  Biciestacion* aux = *ListaBiciestaciones;
+  int found = 0, numeroBiciestacion = atoi(NumeroBici), CuentaBici = 0;
+  Nueva->NumeroBici = id;
+  Nueva->rentas = 0;
+  strcpy(Nueva->Timestamp, "NULL");
+  Nueva->Biciestacion = numeroBiciestacion;
+  Nueva->siguiente = NULL;
+  while(aux != NULL){
+    if(Nueva->Biciestacion == aux->NumBiciestacion)
+      found = 1;
+    aux = aux->siguiente;
+  }
+  if(found == 0)
+    printf("No se pudo añadir porque no se encontro la biciestacion introducida\n");
+}
 void anadirBiciestacion(int id, char NombreGenerico[], char Calle[], char numero[], char cp[], char Ciudad[], Biciestacion** Lista){
   Biciestacion* Nueva = (Biciestacion*)malloc(sizeof(Biciestacion));
   Biciestacion* aux;
@@ -432,11 +483,18 @@ void anadirBiciestacion(int id, char NombreGenerico[], char Calle[], char numero
     aux->siguiente = Nueva;
   }
 }
-void imprimirArchivos(Biciestacion** ListaBicis){
+void imprimirArchivos(Biciestacion** ListaBicis, Bicicleta** ListaBicicletas){
   Biciestacion* aux = *ListaBicis;
+  Bicicleta* aux2 = *ListaBicicletas;
   FILE* Archivo = fopen("biciestaciones.txt", "wt");
   while (aux != NULL) {
     fprintf(Archivo, "%ld/%s/%s/%d/%d/%s/\n", aux->NumBiciestacion, aux->NombreGenerico, aux->Calle, aux->Numero, aux->CP, aux->Ciudad);
+    aux = aux->siguiente;
+  }
+  fclose(Archivo);
+  Archivo = fopen("bicis.txt", "wt");
+  while(aux2 != NULL){
+    fprintf(Archivo, "%ld/%ld/%ld/%s", aux2->NumeroBici, aux2->Biciestacion, aux2->rentas, aux2->Timestamp);
     aux = aux->siguiente;
   }
   fclose(Archivo);
