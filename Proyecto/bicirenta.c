@@ -306,9 +306,10 @@ void altaBiciestacion(Biciestacion** Lista){
     error[0] = '\0';
   }
   validacion = 1;
-  while(validacion){
+  validacion2 = 1;
+  while(validacion || validacion2){
     validacion = Pedir_datos(cp, "codigo postal", 5);
-    validacion = validarNumeros(cp, error);
+    validacion2 = validarNumeros(cp, error);
     if(strlen(cp) != 5){
       printf("Este campo se compone de solo 5 caracteres\n");
       validacion = 1;
@@ -319,9 +320,10 @@ void altaBiciestacion(Biciestacion** Lista){
   }
 
   validacion = 1;
-  while(validacion){
+  validacion2 = 1;
+  while(validacion || validacion2){
     validacion = Pedir_datos(Estacion.Ciudad, "ciudad", 50);
-    validacion = ValidarCaracteres(Estacion.Ciudad, error);
+    validacion2 = ValidarCaracteres(Estacion.Ciudad, error);
     if(strlen(error) != 0)
       puts(error);
     error[0] = '\0';
@@ -336,7 +338,7 @@ void altaBici(Bicicleta** Lista, Biciestacion** ListaBiciestaciones){
   Archivo = fopen("bicis.txt", "rt");
   int id = 0;
   Biciestacion* LBiciestaciones = *ListaBiciestaciones;
-  int validacion = 1;
+  int validacion = 1, validacion2 = 1;
   if (Archivo == NULL) {
     id = 1;
   }else{
@@ -354,9 +356,9 @@ void altaBici(Bicicleta** Lista, Biciestacion** ListaBiciestaciones){
     LBiciestaciones = LBiciestaciones->siguiente;
   }
   printf("\n");
-  while(validacion){
+  while(validacion || validacion2){
     validacion = Pedir_datos(NumBiciestacion, "de la lista anterior, el numero de biciestacion", 3);
-    validacion = validarNumeros(NumBiciestacion, error);
+    validacion2 = validarNumeros(NumBiciestacion, error);
     if(strlen(error) != 0)
       puts(error);
     error[0] = '\0';
@@ -366,9 +368,9 @@ void altaBici(Bicicleta** Lista, Biciestacion** ListaBiciestaciones){
 }
 void altaUsuarios(User** Lista){
   FILE* Archivo;
-  User Usuario, *auxiliar = *Lista;
+  User Usuario, *auxiliar = *Lista, *auxiliar2 = *Lista;
   char tarjeta[9], error[100], TipoUsuario[2];
-  int validacion = 1, validacion2 = 1, id = 0;
+  int validacion = 1, validacion2 = 1, validacion3 = 1, id = 0;
   Archivo = fopen("login.txt", "rt");
   if (Archivo == NULL) {
     id = 1;
@@ -403,9 +405,20 @@ void altaUsuarios(User** Lista){
     error[0] = '\0';
   }
   validacion = 1;
-  while(validacion){
+  validacion2 = 1;
+  while(validacion || validacion2 || validacion3){
     validacion = Pedir_datos(tarjeta, "numero de tarjeta de credito", 8);
-    validacion = validarNumeros(tarjeta, error);
+    validacion2= validarNumeros(tarjeta, error);
+    while(auxiliar2 != NULL){
+      if(auxiliar2->TarjetaCredito == atoi(tarjeta)){
+        __fpurge(stdin);
+        printf("Esta tarjeta ya esta registrada\n");
+        validacion3 = 1;
+      }else{
+        validacion3 = 0;
+      }
+      auxiliar2 = auxiliar2->siguiente;
+    }
     if(strlen(tarjeta) != 8){
       validacion = 1;
       printf("Este campo solo admite 8 caracteres\n");
