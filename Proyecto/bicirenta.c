@@ -63,7 +63,6 @@ void reasignar(char[], char[], Bicicleta**, Biciestacion**);
 void status(Biciestacion**, Bicicleta**);
 int obtenerNumerorentas(int, Bicicleta**);
 void liberarMemoria(User**);
-void Usu(User**);
 //******************************************************************************
 // Funcion principal
 //******************************************************************************
