@@ -62,6 +62,8 @@ void reasignarBicis(Bicicleta**, Biciestacion**);
 void reasignar(char[], char[], Bicicleta**, Biciestacion**);
 void status(Biciestacion**, Bicicleta**);
 int obtenerNumerorentas(int, Bicicleta**);
+void eliminarBiciestacion(Biciestacion**, Bicicleta**);
+void deleteBiciestacion(Biciestacion**, Bicicleta**, char[]);
 void liberarMemoria(User**);
 //******************************************************************************
 
@@ -176,8 +178,8 @@ void MenuAdministrador(Biciestacion** ListaBiciestaciones, Bicicleta** ListaBici
   printf("Ha iniciado sesion correctamente\n\n");
   printf("\ta. Alta de una nueva bici-estacion.\n");
   printf("\tb. Baja de una nueva bici-estacion.\n");
-  printf("\tc. Alta de una bici a una bici-estacion.\n");
-  printf("\td. Baja de una bici a una bici-estacion.\n");
+  printf("\tc. Alta de una bici en una bici-estacion.\n");
+  printf("\td. Baja de una bici en una bici-estacion.\n");
   printf("\te. Reasignar bicicletas entre biciestaciones.\n");
   printf("\tf. Mostrar estatus.\n");
   printf("\tg. Alta de un usuario del servicio.\n");
@@ -190,7 +192,7 @@ void MenuAdministrador(Biciestacion** ListaBiciestaciones, Bicicleta** ListaBici
       altaBiciestacion(ListaBiciestaciones);
       break;
     case 'b':
-      printf("Baja de una bici-estacion\n");
+      eliminarBiciestacion(ListaBiciestaciones, ListaBicis);
       break;
     case 'c':
       altaBici(ListaBicis, ListaBiciestaciones);
@@ -706,6 +708,57 @@ int obtenerNumerorentas(int numeroBiciestacion, Bicicleta** ListaBicis){
     aux = aux->siguiente;
   }
   return numeroRentas;
+}
+void eliminarBiciestacion(Biciestacion** ListaBiciestaciones, Bicicleta** ListaBicis){
+  system("clear");
+  char numero[4], error[100];
+  int validacion = 1, validacion2 = 1;
+  printf("\t\tBaja de una biciestacion\n");
+  while(validacion || validacion2){
+    validacion = Pedir_datos(numero, "biciestacion a eliminar", 3);
+    validacion2 = validarNumeros(numero, error);
+    if(strlen(error) != 0)
+      puts(error);
+    error[0] = '\0';
+  }
+  deleteBiciestacion(ListaBiciestaciones, ListaBicis, numero);
+}
+void deleteBiciestacion(Biciestacion** ListaBiciestaciones, Bicicleta** ListaBicis, char numero[]){
+  int found = 0;
+  Biciestacion* aux = *ListaBiciestaciones, *aux3 = *ListaBiciestaciones, *ant = NULL;
+  Bicicleta* aux2 = *ListaBicis;
+  int cuentaBicis = 0;
+  while(aux != NULL){
+    if(aux->NumBiciestacion == atoi(numero))
+      found = 1;
+    aux = aux->siguiente;
+  }
+  if(found == 0)
+    printf("No se puede eliminar la biciestacion porque la biciestacion introducida no existe\n");
+  else{
+    while(aux2 != NULL){
+      if(aux2->Biciestacion == atoi(numero))
+        cuentaBicis++;
+      aux2 = aux2->siguiente;
+    }
+    if(cuentaBicis != 0)
+      printf("No se puede eliminar la biciestacion seleccionada debido a que aun tiene bicis relacionadas a ella\n");
+    else{
+      while(aux3 != NULL && aux3->NumBiciestacion != atoi(numero)) {
+        ant = aux3;
+        aux3 = aux3->siguiente;
+      }
+      if(aux3 != NULL){
+        if(ant != NULL){
+          ant->siguiente = aux3->siguiente;
+        }else{
+          *ListaBiciestaciones = aux3->siguiente;
+        }
+        free(aux3);
+      }
+      printf("Se ha eliminado correctamente la biciestacion\n");
+    }
+  }
 }
 void imprimirArchivos(Biciestacion** ListaBicis, Bicicleta** ListaBicicletas, User** ListaUsuarios){
   Biciestacion* aux = *ListaBicis;
