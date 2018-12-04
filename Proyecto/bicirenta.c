@@ -45,16 +45,18 @@ void cargarListaBiciestacion(Biciestacion**);
 void cargarListaBicis(Bicicleta**);
 void separarListaUsuarios(int* i, int* j, int* contador, char linea[], char Datos[6][200]);
 void limpiarDatos(char Datos[6][200]);
-void MenuAdministrador(Biciestacion**, Bicicleta**);
+void MenuAdministrador(Biciestacion**, Bicicleta**, User**);
 void MenuUsuario();
 void altaBiciestacion(Biciestacion**);
 void altaBici(Bicicleta**, Biciestacion**);
+void altaUsuarios(User**);
 int ValidarCaracteres(char[], char[]);
 int validarNumeros(char[], char[]);
 void anadirBiciestacion(int, char[], char[], char[], char[], char[], Biciestacion**);
 void anadirBici(int, char[], Bicicleta**, Biciestacion**);
+void anadirUsuario(int, char[], char[], char[], char[], char[], User**);
 void MostrarLista(User*);
-void imprimirArchivos(Biciestacion**, Bicicleta**);
+void imprimirArchivos(Biciestacion**, Bicicleta**, User**);
 void liberarMemoria(User**);
 //******************************************************************************
 
@@ -81,7 +83,7 @@ int main(int argc, char *argv[]) {
     leerListaUsuarios(&ListaUsuarios);
     if(iniciar_sesion(&TipoUsuario, Nombre, Password, ListaUsuarios)){
       if (TipoUsuario == 1) {
-        MenuAdministrador(&ListaBiciestacion, &ListaBicis);
+        MenuAdministrador(&ListaBiciestacion, &ListaBicis, &ListaUsuarios);
       }
       if (TipoUsuario == 0) {
         MenuUsuario();
@@ -160,10 +162,10 @@ int iniciar_sesion(int* TipoUsuario, char Nombre[], char Password[], User* Lista
       *TipoUsuario = aux->Flag;
     }
     aux = aux->siguiente;
-  }while ((aux != NULL) && ((strcmp(Nombre, aux->Nombre) == 0) && (strcmp(Password, aux->Contrasenia) == 0)));
+  }while ((aux != NULL));
   return inicio;
 }
-void MenuAdministrador(Biciestacion** ListaBiciestaciones, Bicicleta** ListaBicis) {
+void MenuAdministrador(Biciestacion** ListaBiciestaciones, Bicicleta** ListaBicis, User** ListaUsuarios) {
   system("clear");
   char Opcion;
   printf("Ha iniciado sesion correctamente\n\n");
@@ -198,14 +200,14 @@ void MenuAdministrador(Biciestacion** ListaBiciestaciones, Bicicleta** ListaBici
       printf("Baja de un usuario\n");
       break;
     case 'g':
-      printf("Baja de un usuario\n");
+      altaUsuarios(ListaUsuarios);
       break;
     case 'h':
       printf("Baja de un usuario\n");
       break;
     case 'i':
       printf("Hasta pronto\nVuelva pronto\n");
-      imprimirArchivos(ListaBiciestaciones, ListaBicis);
+      imprimirArchivos(ListaBiciestaciones, ListaBicis, ListaUsuarios);
       exit(0);
       break;
     default:
@@ -215,7 +217,7 @@ void MenuAdministrador(Biciestacion** ListaBiciestaciones, Bicicleta** ListaBici
   printf("Presiona enter para volver al menu...");
   __fpurge(stdin);
   getchar();
-  MenuAdministrador(ListaBiciestaciones, ListaBicis);
+  MenuAdministrador(ListaBiciestaciones, ListaBicis, ListaUsuarios);
 }
 void MenuUsuario(){
   system("clear");
@@ -362,6 +364,71 @@ void altaBici(Bicicleta** Lista, Biciestacion** ListaBiciestaciones){
   anadirBici(id, NumBiciestacion, Lista, ListaBiciestaciones);
   fclose(Archivo);
 }
+void altaUsuarios(User** Lista){
+  FILE* Archivo;
+  User Usuario, *auxiliar = *Lista;
+  char tarjeta[9], error[100], TipoUsuario[2];
+  int validacion = 1, validacion2 = 1, id = 0;
+  Archivo = fopen("login.txt", "rt");
+  if (Archivo == NULL) {
+    id = 1;
+  }else{
+    while(auxiliar->siguiente != NULL)
+      auxiliar = auxiliar->siguiente;
+    id = auxiliar->UserNumber +1;
+  }
+  Archivo = fopen("login.txt", "at");
+  system("clear");
+  printf("\t\tDar de alta un nuevo usuario\n");
+  while(validacion || validacion2){
+    validacion = Pedir_datos(Usuario.Nombre, "nombre de usuario", 49);
+    validacion2 = ValidarCaracteres(Usuario.Nombre, error);
+    if(strlen(error) != 0)
+      puts(error);
+    error[0] = '\0';
+  }
+  validacion = 1;
+  while(validacion){
+    validacion = Pedir_datos(Usuario.Direccion, "direccion del usuario", 199);
+    if(strlen(error) != 0)
+      puts(error);
+    error[0] = '\0';
+  }
+
+  validacion = 1;
+  while(validacion){
+    validacion = Pedir_datos(Usuario.Contrasenia, "contrasenia", 49);
+    if(strlen(error) != 0)
+      puts(error);
+    error[0] = '\0';
+  }
+  validacion = 1;
+  while(validacion){
+    validacion = Pedir_datos(tarjeta, "numero de tarjeta de credito", 8);
+    validacion = validarNumeros(tarjeta, error);
+    if(strlen(tarjeta) != 8){
+      validacion = 1;
+      printf("Este campo solo admite 8 caracteres\n");
+    }
+    if(strlen(error) != 0)
+      puts(error);
+    error[0] = '\0';
+  }
+  validacion = 1;
+  while(validacion){
+    printf("Ingresar tipo de usuario (1 para administrador o 0 para usuario normal): ");
+    TipoUsuario[0] = getchar();
+    if(TipoUsuario[0] != '1' && TipoUsuario[0] != '0'){
+      validacion = 1;
+      printf("Este campo solo admite 1 o 0!\n");
+    }else{
+      validacion = 0;
+    }
+  }
+  TipoUsuario[1] = '\0';
+  anadirUsuario(id, Usuario.Nombre, Usuario.Direccion, Usuario.Contrasenia, tarjeta, TipoUsuario, Lista);
+  fclose(Archivo);
+}
 int ValidarCaracteres(char Cadena[], char Error[]){
   int i = 0;
   int Status = 0;
@@ -506,9 +573,31 @@ void anadirBiciestacion(int id, char NombreGenerico[], char Calle[], char numero
     aux->siguiente = Nueva;
   }
 }
-void imprimirArchivos(Biciestacion** ListaBicis, Bicicleta** ListaBicicletas){
+void anadirUsuario(int id, char Nombre[], char Direccion[], char Contrasenia[], char tarjeta[], char TipoUsuario[], User** Lista){
+  User* Nuevo = (User*)malloc(sizeof(User));
+  User* aux;
+  strcpy(Nuevo->Nombre, Nombre);
+  strcpy(Nuevo->Direccion, Direccion);
+  strcpy(Nuevo->Contrasenia, Contrasenia);
+  Nuevo->TarjetaCredito = atoi(tarjeta);
+  Nuevo->UserNumber = id;
+  Nuevo->Flag = atoi(TipoUsuario);
+  Nuevo->siguiente = NULL;
+  if (*Lista == NULL) {
+    *Lista = Nuevo;
+  }else{
+    aux = *Lista;
+    while (aux->siguiente != NULL) {
+      aux = aux->siguiente;
+    }
+    aux->siguiente = Nuevo;
+  }
+  printf("Se ha añadido con exito el usuario\n");
+}
+void imprimirArchivos(Biciestacion** ListaBicis, Bicicleta** ListaBicicletas, User** ListaUsuarios){
   Biciestacion* aux = *ListaBicis;
   Bicicleta* aux2 = *ListaBicicletas;
+  User* aux3 = *ListaUsuarios;
   FILE* Archivo = fopen("biciestaciones.txt", "wt");
   while (aux != NULL) {
     fprintf(Archivo, "%ld/%s/%s/%d/%d/%s/\n", aux->NumBiciestacion, aux->NombreGenerico, aux->Calle, aux->Numero, aux->CP, aux->Ciudad);
@@ -519,6 +608,12 @@ void imprimirArchivos(Biciestacion** ListaBicis, Bicicleta** ListaBicicletas){
   while(aux2 != NULL){
     fprintf(Archivo, "%ld/%ld/%ld/%s/x/x/\n", aux2->NumeroBici, aux2->Biciestacion, aux2->rentas, aux2->Timestamp);
     aux2 = aux2->siguiente;
+  }
+  fclose(Archivo);
+  Archivo = fopen("login.txt", "wt");
+  while (aux3 != NULL) {
+    fprintf(Archivo, "%s/%s/%s/%ld/%ld/%d/\n", aux3->Nombre, aux3->Direccion, aux3->Contrasenia, aux3->TarjetaCredito, aux3->UserNumber, aux3->Flag);
+    aux3 = aux3->siguiente;
   }
   fclose(Archivo);
 }
