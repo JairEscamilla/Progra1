@@ -26,7 +26,7 @@ typedef struct defBiciestacion{
 }Biciestacion;
 
 typedef struct defBici{
-  long Numero;
+  long NumeroBici;
   long Biciestacion;
   long rentas;
   char Timestamp[50];
@@ -42,6 +42,7 @@ int Pedir_datos(char[], char[], int);
 int iniciar_sesion(int*, char[], char[], User*);
 void leerListaUsuarios(User**);
 void cargarListaBiciestacion(Biciestacion**);
+void cargarListaBicis(Bicicleta**);
 void separarListaUsuarios(int* i, int* j, int* contador, char linea[], char Datos[6][200]);
 void limpiarDatos(char Datos[6][200]);
 void MenuAdministrador(Biciestacion**);
@@ -64,7 +65,9 @@ int main(int argc, char *argv[]) {
   char Password[50];
   User* ListaUsuarios = NULL;
   Biciestacion* ListaBiciestacion = NULL;
+  Bicicleta* ListaBicis = NULL;
   cargarListaBiciestacion(&ListaBiciestacion);
+  cargarListaBicis(&ListaBicis);
   if (argc != 1) {
     printf("Esto se va a desarrollar despues\n");
   }else{
@@ -164,11 +167,13 @@ void MenuAdministrador(Biciestacion** Lista) {
   printf("Ha iniciado sesion correctamente\n\n");
   printf("\ta. Alta de una nueva bici-estacion.\n");
   printf("\tb. Baja de una nueva bici-estacion.\n");
-  printf("\tc. Reasignar bicicletas entre biciestaciones.\n");
-  printf("\td. Mostrar estatus.\n");
-  printf("\te. Alta de un usuario del servicio.\n");
-  printf("\tf. Baja de un usuario del servicio.\n");
-  printf("\tg. Salida del sistema.\n\n");
+  printf("\tc. Alta de una bici a una bici-estacion.\n");
+  printf("\td. Baja de una bici a una bici-estacion.\n");
+  printf("\te. Reasignar bicicletas entre biciestaciones.\n");
+  printf("\tf. Mostrar estatus.\n");
+  printf("\tg. Alta de un usuario del servicio.\n");
+  printf("\th. Baja de un usuario del servicio.\n");
+  printf("\ti. Salida del sistema.\n\n");
   printf("Seleccione una opcion-> ");
   scanf("%c", &Opcion);
   switch (Opcion) {
@@ -191,6 +196,12 @@ void MenuAdministrador(Biciestacion** Lista) {
       printf("Baja de un usuario\n");
       break;
     case 'g':
+      printf("Baja de un usuario\n");
+      break;
+    case 'h':
+      printf("Baja de un usuario\n");
+      break;
+    case 'i':
       printf("Hasta pronto\nVuelva pronto\n");
       imprimirArchivos(Lista);
       exit(0);
@@ -362,6 +373,37 @@ void cargarListaBiciestacion(Biciestacion** Lista){
         *Lista = Nueva;
       }else{
         Biciestacion* aux = *Lista;
+        while (aux->siguiente != NULL) {
+          aux = aux->siguiente;
+        }
+        aux->siguiente = Nueva;
+      }
+    }
+  }
+}
+
+
+void cargarListaBicis(Bicicleta** Lista){
+  char linea[500], Datos[6][200];
+  int i, j = 0, contador = 0;
+  FILE* Archivo = fopen("bicis.txt", "rt");
+  if (Archivo == NULL) {
+    printf("Ha ocurrido un error, vuelva a intentar\n");
+  }else{
+    while (fgets(linea, 500, Archivo) != NULL) {
+      Bicicleta* Nueva = (Bicicleta*)malloc(sizeof(Bicicleta));
+      i = 0;
+      contador = 0;
+      separarListaUsuarios(&i, &j, &contador, linea, Datos);
+      Nueva->NumeroBici = atoi(Datos[0]);
+      Nueva->Biciestacion = atoi(Datos[1]);
+      Nueva->rentas = atoi(Datos[2]);
+      strcpy(Nueva->Timestamp, Datos[3]);
+      Nueva->siguiente = NULL;
+      if (*Lista == NULL) {
+        *Lista = Nueva;
+      }else{
+        Bicicleta* aux = *Lista;
         while (aux->siguiente != NULL) {
           aux = aux->siguiente;
         }
