@@ -340,12 +340,14 @@ void altaBici(Bicicleta** Lista, Biciestacion** ListaBiciestaciones){
   }else{
     while(auxiliar->siguiente != NULL)
       auxiliar = auxiliar->siguiente;
+    printf("%ld\n", auxiliar->NumeroBici);
     id = auxiliar->NumeroBici +1;
   }
   Archivo = fopen("bicis.txt", "at");
   system("clear");
   printf("\t\tDar de alta una nueva bicicleta\n");
   printf("\n");
+  printf("%d\n", id);
   while(LBiciestaciones != NULL){
     printf("\t%ld-> %s\n", LBiciestaciones->NumBiciestacion, LBiciestaciones->NombreGenerico);
     LBiciestaciones = LBiciestaciones->siguiente;
@@ -449,6 +451,7 @@ void cargarListaBicis(Bicicleta** Lista){
 void anadirBici(int id, char NumeroBici[], Bicicleta** Lista, Biciestacion** ListaBiciestaciones){
   Bicicleta* Nueva = (Bicicleta*)malloc(sizeof(Bicicleta));
   Biciestacion* aux = *ListaBiciestaciones;
+  Bicicleta* ListaBicis = *Lista;
   int found = 0, numeroBiciestacion = atoi(NumeroBici), CuentaBici = 0;
   Nueva->NumeroBici = id;
   Nueva->rentas = 0;
@@ -462,6 +465,27 @@ void anadirBici(int id, char NumeroBici[], Bicicleta** Lista, Biciestacion** Lis
   }
   if(found == 0)
     printf("No se pudo añadir porque no se encontro la biciestacion introducida\n");
+  else{
+    while(ListaBicis != NULL){
+      if(ListaBicis->Biciestacion == numeroBiciestacion)
+        CuentaBici++;
+      ListaBicis = ListaBicis->siguiente;
+    }
+    if(CuentaBici > 10)
+      printf("No se puede agregar la Bici a la biciestacion seleccionada, ya que se ecnuentra llena\n");
+    else{
+      if (*Lista == NULL) {
+        *Lista = Nueva;
+      }else{
+        ListaBicis = *Lista;
+        while (ListaBicis->siguiente != NULL) {
+          ListaBicis = ListaBicis->siguiente;
+        }
+        ListaBicis->siguiente = Nueva;
+      }
+      printf("La bicicleta se ha añadido correctamente\n");
+    }
+  }
 }
 void anadirBiciestacion(int id, char NombreGenerico[], char Calle[], char numero[], char cp[], char Ciudad[], Biciestacion** Lista){
   Biciestacion* Nueva = (Biciestacion*)malloc(sizeof(Biciestacion));
@@ -494,8 +518,8 @@ void imprimirArchivos(Biciestacion** ListaBicis, Bicicleta** ListaBicicletas){
   fclose(Archivo);
   Archivo = fopen("bicis.txt", "wt");
   while(aux2 != NULL){
-    fprintf(Archivo, "%ld/%ld/%ld/%s", aux2->NumeroBici, aux2->Biciestacion, aux2->rentas, aux2->Timestamp);
-    aux = aux->siguiente;
+    fprintf(Archivo, "%ld/%ld/%ld/%s/x/x/\n", aux2->NumeroBici, aux2->Biciestacion, aux2->rentas, aux2->Timestamp);
+    aux2 = aux2->siguiente;
   }
   fclose(Archivo);
 }
