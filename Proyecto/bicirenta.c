@@ -49,7 +49,7 @@ void cargarListaBicis(Bicicleta**);
 void separarListaUsuarios(int* i, int* j, int* contador, char linea[], char Datos[6][200]);
 void limpiarDatos(char Datos[6][200]);
 void MenuAdministrador(Biciestacion**, Bicicleta**, User**);
-void MenuUsuario();
+void MenuUsuario(Biciestacion**, Bicicleta**, User**);
 void altaBiciestacion(Biciestacion**);
 void altaBici(Bicicleta**, Biciestacion**);
 void altaUsuarios(User**);
@@ -233,13 +233,35 @@ void MenuAdministrador(Biciestacion** ListaBiciestaciones, Bicicleta** ListaBici
   getchar();
   MenuAdministrador(ListaBiciestaciones, ListaBicis, ListaUsuarios);
 }
-void MenuUsuario(){
+void MenuUsuario(Biciestacion** ListaBiciestaciones, Bicicleta** ListaBicis, User** ListaUsuarios){
   system("clear");
   printf("Ha iniciado sesion correctamente\n\n");
   printf("\ta. Rentar una bicicleta.\n");
   printf("\tb. Estacionar una bicicleta.\n");
   printf("\tc. Mostrar el saldo.\n\n");
+  printf("\td. Salir del sistema.\n\n");
   printf("Ingresar una opcion: ");
+  char opcion;
+  switch (opcion) {
+    case 'a':
+      break;
+    case 'b':
+      break;
+    case 'c':
+      break;
+    case 'd':
+      printf("Hasta pronto\nVuelva pronto\n");
+      imprimirArchivos(ListaBiciestaciones, ListaBicis, ListaUsuarios);
+      exit(0);
+      break;
+    default:
+      printf("Opcion incorrecta\nSelecciona una opcion correcta.\n");
+      break;
+  }
+  printf("Presiona enter para volver al menu...");
+  __fpurge(stdin);
+  getchar();
+  MenuUsuario(ListaBiciestaciones, ListaBicis, ListaUsuarios);
 }
 void leerListaUsuarios(User** Lista){
   char linea[500], Datos[6][200];
