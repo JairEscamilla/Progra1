@@ -42,7 +42,7 @@ typedef struct defBici{
 //******************************************************************************
 void validar_archivo_login();
 int Pedir_datos(char[], char[], int);
-int iniciar_sesion(int*, char[], char[], User*);
+int iniciar_sesion(int*, char[], char[], User*, long*);
 void leerListaUsuarios(User**);
 void cargarListaBiciestacion(Biciestacion**);
 void cargarListaBicis(Bicicleta**);
@@ -81,6 +81,7 @@ int main(int argc, char *argv[]) {
   int TipoUsuario = 0;
   char Nombre[50];
   char Password[50];
+  long IdUsuario;
   User* ListaUsuarios = NULL;
   Biciestacion* ListaBiciestacion = NULL;
   Bicicleta* ListaBicis = NULL;
@@ -95,12 +96,12 @@ int main(int argc, char *argv[]) {
     system("clear");
     while(Pedir_datos(Password, "password", 50));
     leerListaUsuarios(&ListaUsuarios);
-    if(iniciar_sesion(&TipoUsuario, Nombre, Password, ListaUsuarios)){
+    if(iniciar_sesion(&TipoUsuario, Nombre, Password, ListaUsuarios, &IdUsuario)){
       if (TipoUsuario == 1) {
         MenuAdministrador(&ListaBiciestacion, &ListaBicis, &ListaUsuarios);
       }
       if (TipoUsuario == 0) {
-        MenuUsuario();
+        MenuUsuario(&ListaBiciestacion, &ListaBicis, &ListaUsuarios);
       }
     }
     else
@@ -167,13 +168,14 @@ void MostrarLista(User* Lista){
     aux = aux->siguiente;
   }
 }
-int iniciar_sesion(int* TipoUsuario, char Nombre[], char Password[], User* Lista){
+int iniciar_sesion(int* TipoUsuario, char Nombre[], char Password[], User* Lista, long* IdUsuario){
   User* aux = Lista;
   int inicio = 0;
   do{
     if ((strcmp(Nombre, aux->Nombre) == 0) && (strcmp(Password, aux->Contrasenia) == 0)) {
       inicio = 1;
       *TipoUsuario = aux->Flag;
+      *IdUsuario = aux->UserNumber;
     }
     aux = aux->siguiente;
   }while ((aux != NULL));
