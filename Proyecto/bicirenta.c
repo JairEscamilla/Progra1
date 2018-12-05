@@ -30,7 +30,7 @@ typedef struct defBici{
   long NumeroBici;
   long Biciestacion;
   long rentas;
-  char Timestamp[50];
+  char Timestamp[100];
   int esrentada;
   long esrentadapor;
   struct defBici* siguiente;
@@ -70,6 +70,8 @@ void eliminarBici(Bicicleta**);
 void deleteBici(Bicicleta**, char[]);
 void eliminarUsuario(User**, Bicicleta**);
 void deleteUsuario(User**, Bicicleta**, char[]);
+void pedirDatosRenta(long, Biciestacion**, Bicicleta**);
+void rentar(Bicicleta**, char[], long);
 void Timestamp(char[]);
 void liberarMemoria(User**);
 //******************************************************************************
@@ -247,6 +249,7 @@ void MenuUsuario(Biciestacion** ListaBiciestaciones, Bicicleta** ListaBicis, Use
   scanf("%c", &opcion);
   switch (opcion) {
     case 'a':
+      pedirDatosRenta(Usuario, ListaBiciestaciones, ListaBicis);
       break;
     case 'b':
       break;
@@ -553,6 +556,8 @@ void cargarListaBicis(Bicicleta** Lista){
       Nueva->Biciestacion = atoi(Datos[1]);
       Nueva->rentas = atoi(Datos[2]);
       strcpy(Nueva->Timestamp, Datos[3]);
+      Nueva->esrentada = atoi(Datos[4]);
+      Nueva->esrentadapor = atoi(Datos[5]);
       Nueva->siguiente = NULL;
       if (*Lista == NULL) {
         *Lista = Nueva;
@@ -915,8 +920,64 @@ void Timestamp(char Cadena[]){
   struct tm *timeinfo;
   time(&rawtime);
   timeinfo = localtime(&rawtime);
-  sprintf(Cadena, "[%d %d %d %d:%d:%d]\n", timeinfo->tm_mday, timeinfo->tm_mon+1, timeinfo->tm_year+1900, timeinfo->tm_hour, timeinfo->tm_min, timeinfo->tm_sec);
+  sprintf(Cadena, "%d%d%d-%d:%d:%d\n", timeinfo->tm_year+1900, timeinfo->tm_mon+1, timeinfo->tm_mday, timeinfo->tm_hour, timeinfo->tm_min, timeinfo->tm_sec);
   Cadena[strlen(Cadena)-1] = '\0';
+}
+void pedirDatosRenta(long Usuario, Biciestacion** ListaBiciestaciones, Bicicleta** ListaBicicletas){
+  system("clear");
+  char numero[4], error[100];
+  int validacion = 1, validacion2 = 1, validacion3 = 0;
+  Bicicleta* aux = *ListaBicicletas, *aux2 = *ListaBicicletas;
+  printf("\t\tRenta de una bicicleta\n");
+
+  while(aux2 != NULL){
+    if(aux2->esrentadapor == Usuario)
+      validacion3 = 1;
+    aux2 = aux2->siguiente;
+  }
+
+  if(validacion3 == 1)
+    printf("Actualmente ya tienes rentada una bicicleta\n");
+  else{
+    if(*ListaBicicletas != NULL){
+      printf("Lista de bicicletas disponibles para renta: \n\n");
+      while(aux != NULL){
+        if(aux->esrentada == 0)
+          printf("\t\tNumero de bici: %ld. Pertenece a biciestacion numero: %ld\n", aux->NumeroBici, aux->Biciestacion);
+        aux = aux->siguiente;
+      }
+      printf("\n");
+
+      while(validacion || validacion2){
+        validacion = Pedir_datos(numero, "numero de bicicleta a rentar", 3);
+        validacion2 = validarNumeros(numero, error);
+        if(strlen(error) != 0)
+          puts(error);
+        error[0] = '\0';
+      }
+      rentar(ListaBicicletas, numero, Usuario);
+    }else
+      printf("Actualmente no hay bicicletas en el sistema\n");
+  }
+}
+void rentar(Bicicleta** ListaBicicletas, char numero[], long Usuario){
+  Bicicleta* aux = *ListaBicicletas;
+  int found = 0;
+  while(aux != NULL && found == 0){
+    if(aux->esrentada == 0 && aux->NumeroBici == atoi(numero))
+      found = 1;
+    else
+      aux = aux->siguiente;
+  }
+  if(found == 0)
+    printf("La bici seleccionada no se encuentra disponible para ser rentada\n");
+  else{
+    aux->esrentada = 1;
+    aux->esrentadapor = Usuario;
+    aux->rentas = aux->rentas+1;
+    Timestamp(aux->Timestamp);
+    printf("La bicicleta esta siendo rentada apartir de ahora\n");
+  }
 }
 void imprimirArchivos(Biciestacion** ListaBicis, Bicicleta** ListaBicicletas, User** ListaUsuarios){
   Biciestacion* aux = *ListaBicis;
