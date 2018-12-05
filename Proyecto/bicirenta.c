@@ -64,6 +64,8 @@ void status(Biciestacion**, Bicicleta**);
 int obtenerNumerorentas(int, Bicicleta**);
 void eliminarBiciestacion(Biciestacion**, Bicicleta**);
 void deleteBiciestacion(Biciestacion**, Bicicleta**, char[]);
+void eliminarBici(Bicicleta**);
+void deleteBici(Bicicleta**, char[]);
 void liberarMemoria(User**);
 //******************************************************************************
 
@@ -198,7 +200,7 @@ void MenuAdministrador(Biciestacion** ListaBiciestaciones, Bicicleta** ListaBici
       altaBici(ListaBicis, ListaBiciestaciones);
       break;
     case 'd':
-      printf("Mostrar estatus\n");
+      eliminarBici(ListaBicis);
       break;
     case 'e':
       reasignarBicis(ListaBicis, ListaBiciestaciones);
@@ -724,7 +726,7 @@ void eliminarBiciestacion(Biciestacion** ListaBiciestaciones, Bicicleta** ListaB
   deleteBiciestacion(ListaBiciestaciones, ListaBicis, numero);
 }
 void deleteBiciestacion(Biciestacion** ListaBiciestaciones, Bicicleta** ListaBicis, char numero[]){
-  int found = 0;
+  int found = 0, i = 0;
   Biciestacion* aux = *ListaBiciestaciones, *aux3 = *ListaBiciestaciones, *ant = NULL;
   Bicicleta* aux2 = *ListaBicis;
   int cuentaBicis = 0;
@@ -734,7 +736,7 @@ void deleteBiciestacion(Biciestacion** ListaBiciestaciones, Bicicleta** ListaBic
     aux = aux->siguiente;
   }
   if(found == 0)
-    printf("No se puede eliminar la biciestacion porque la biciestacion introducida no existe\n");
+    printf("No se puede dar de baja la biciestacion porque la biciestacion introducida no existe\n");
   else{
     while(aux2 != NULL){
       if(aux2->Biciestacion == atoi(numero))
@@ -742,12 +744,15 @@ void deleteBiciestacion(Biciestacion** ListaBiciestaciones, Bicicleta** ListaBic
       aux2 = aux2->siguiente;
     }
     if(cuentaBicis != 0)
-      printf("No se puede eliminar la biciestacion seleccionada debido a que aun tiene bicis relacionadas a ella\n");
+      printf("No se puede dar de baja la biciestacion seleccionada debido a que aun tiene bicis relacionadas a ella\n");
     else{
       while(aux3 != NULL && aux3->NumBiciestacion != atoi(numero)) {
+        i++;
         ant = aux3;
         aux3 = aux3->siguiente;
       }
+      if(i == 0 && ant == NULL)
+        remove("biciestaciones.txt");
       if(aux3 != NULL){
         if(ant != NULL){
           ant->siguiente = aux3->siguiente;
@@ -757,6 +762,66 @@ void deleteBiciestacion(Biciestacion** ListaBiciestaciones, Bicicleta** ListaBic
         free(aux3);
       }
       printf("Se ha eliminado correctamente la biciestacion\n");
+    }
+  }
+}
+void eliminarBici(Bicicleta** Lista){
+  system("clear");
+  char numero[4], error[100];
+  int validacion = 1, validacion2 = 1;
+  Bicicleta* aux = *Lista;
+  printf("\t\tBaja de una bicicleta de una biciestacion\n");
+  if(*Lista != NULL){
+    printf("Lista de bicicletas: \n\n");
+    while(aux != NULL){
+      printf("\t\tNumero de bici: %ld. Pertenece a biciestacion numero: %ld\n", aux->NumeroBici, aux->Biciestacion);
+      aux = aux->siguiente;
+    }
+    printf("\n");
+
+    while(validacion || validacion2){
+      validacion = Pedir_datos(numero, "bicicleta a eliminar", 3);
+      validacion2 = validarNumeros(numero, error);
+      if(strlen(error) != 0)
+        puts(error);
+      error[0] = '\0';
+    }
+    deleteBici(Lista, numero);
+  }else
+    printf("Actualmente no hay bicicletas dadas de alta\n");
+}
+void deleteBici(Bicicleta** ListaBicis, char numero[]){
+  int found = 0, i = 0;
+  Bicicleta* aux = *ListaBicis, *aux2 = *ListaBicis, *aux3, *ant = NULL;
+  while(aux != NULL){
+    if(aux->NumeroBici == atoi(numero)){
+      found = 1;
+      aux3 = aux;
+    }
+    aux = aux->siguiente;
+  }
+  if(found == 0)
+    printf("No se puede dar de baja la bicicleta porque la bicicleta introducida no existe\n");
+  else{
+    if(aux3->esrentada == 1)
+      printf("La bicicleta no se puede dar de baja debido a que en este momento esta siendo rentada\n");
+    else{
+      while(aux2 != NULL && aux2->NumeroBici != atoi(numero)) {
+        i++;
+        ant = aux2;
+        aux2 = aux2->siguiente;
+      }
+      if(i == 0 && ant == NULL)
+        remove("bicis.txt");
+      if(aux2 != NULL){
+        if(ant != NULL){
+          ant->siguiente = aux2->siguiente;
+        }else{
+          *ListaBicis = aux2->siguiente;
+        }
+        free(aux2);
+      }
+      printf("Se ha eliminado correctamente la bicicleta\n");
     }
   }
 }
