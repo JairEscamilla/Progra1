@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 // Definimos las estructuras
 //******************************************************************************
 // Estructura de un Usuario
@@ -69,6 +70,7 @@ void eliminarBici(Bicicleta**);
 void deleteBici(Bicicleta**, char[]);
 void eliminarUsuario(User**, Bicicleta**);
 void deleteUsuario(User**, Bicicleta**, char[]);
+void Timestamp(char[]);
 void liberarMemoria(User**);
 //******************************************************************************
 
@@ -882,6 +884,14 @@ void deleteUsuario(User** ListaUsuarios, Bicicleta** ListaBicis, char numero[]){
       printf("Se ha eliminado correctamente el usuario seleccionado\n");
     }
   }
+}
+void Timestamp(char Cadena[]){
+  time_t rawtime;
+  struct tm *timeinfo;
+  time(&rawtime);
+  timeinfo = localtime(&rawtime);
+  sprintf(Cadena, "[%d %d %d %d:%d:%d]\n", timeinfo->tm_mday, timeinfo->tm_mon+1, timeinfo->tm_year+1900, timeinfo->tm_hour, timeinfo->tm_min, timeinfo->tm_sec);
+  Cadena[strlen(Cadena)-1] = '\0';
 }
 void imprimirArchivos(Biciestacion** ListaBicis, Bicicleta** ListaBicicletas, User** ListaUsuarios){
   Biciestacion* aux = *ListaBicis;
