@@ -72,6 +72,8 @@ void eliminarUsuario(User**, Bicicleta**);
 void deleteUsuario(User**, Bicicleta**, char[]);
 void pedirDatosRenta(long, Biciestacion**, Bicicleta**);
 void rentar(Bicicleta**, char[], long);
+void devolverBici(long, Biciestacion**, Bicicleta**);
+void devolver(long, Bicicleta**, Biciestacion**, char[]);
 void Timestamp(char[]);
 void liberarMemoria(User**);
 //******************************************************************************
@@ -252,6 +254,7 @@ void MenuUsuario(Biciestacion** ListaBiciestaciones, Bicicleta** ListaBicis, Use
       pedirDatosRenta(Usuario, ListaBiciestaciones, ListaBicis);
       break;
     case 'b':
+      devolverBici(Usuario, ListaBiciestaciones, ListaBicis);
       break;
     case 'c':
       break;
@@ -975,8 +978,69 @@ void rentar(Bicicleta** ListaBicicletas, char numero[], long Usuario){
     aux->esrentada = 1;
     aux->esrentadapor = Usuario;
     aux->rentas = aux->rentas+1;
+    aux->Biciestacion = 0;
     Timestamp(aux->Timestamp);
     printf("La bicicleta esta siendo rentada apartir de ahora\n");
+  }
+}
+void devolverBici(long Usuario, Biciestacion** ListaBiciestaciones, Bicicleta** ListaBicis){
+  Biciestacion* aux = *ListaBiciestaciones;
+  Bicicleta* aux2 = *ListaBicis;
+  int NumeroD = 0;
+  char numero[4], error[100];
+  int validacion = 1, validacion2 = 1, found = 0;
+  system("clear");
+  printf("\t\tEstacionar bicicleta\n");
+  while(aux2 != NULL){
+    if(aux2->esrentadapor == Usuario)
+      found = 1;
+    aux2 = aux2->siguiente;
+  }
+
+  if(found == 1){
+    printf("Lista de biciestaciones con lugares disponibles: \n\n");
+    while(aux != NULL){
+      NumeroD = 10 - obtenerNumerorentas(aux->NumBiciestacion, ListaBicis);
+      if(NumeroD > 0)
+        printf("N. biciestacion: %ld-> Nombre biciestacion: %s-> Lugares disponibles: %d\n", aux->NumBiciestacion, aux->NombreGenerico, NumeroD);
+      aux = aux->siguiente;
+    }
+    while(validacion || validacion2){
+      validacion = Pedir_datos(numero, "biciestacion donde se desea devolver: ", 3);
+      validacion2 = validarNumeros(numero, error);
+      if(strlen(error) != 0)
+        puts(error);
+      error[0] = '\0';
+    }
+    devolver(Usuario, ListaBicis, ListaBiciestaciones, numero);
+  }else
+    printf("Actualmente usted no tiene bicis rentadas\n");
+}
+void devolver(long Usuario, Bicicleta** ListaBicis, Biciestacion** ListaBiciestaciones, char numero[]){
+  Biciestacion* aux = *ListaBiciestaciones;
+  Bicicleta* aux2 = *ListaBicis;
+  int NumeroD = 0, found = 0, found2 = 0;
+  while(aux != NULL && found == 0){
+    NumeroD = 10 - obtenerNumerorentas(aux->NumBiciestacion, ListaBicis);
+    if(NumeroD > 0 && aux->NumBiciestacion == atoi(numero))
+      found = 1;
+    else
+      aux = aux->siguiente;
+  }
+  if(found == 0)
+    printf("No se puede devolver la bicicleta a la biciestacion seleccionada porque ya no hay lugares o porque no introdujo una biciestacion invalida\n");
+  else{
+    while(aux2 != NULL && found2 == 0){
+      if(aux2->esrentadapor == Usuario)
+        found2 = 1;
+      else
+        aux2 = aux2->siguiente;
+    }
+    strcpy(aux2->Timestamp, "NULL");
+    aux2->esrentada = 0;
+    aux2->esrentadapor = 0;
+    aux2->Biciestacion = atoi(numero);
+    printf("Se ha devuelto de manera correcta la bicicleta\n");
   }
 }
 void imprimirArchivos(Biciestacion** ListaBicis, Bicicleta** ListaBicicletas, User** ListaUsuarios){
