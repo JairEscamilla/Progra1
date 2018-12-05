@@ -49,7 +49,7 @@ void cargarListaBicis(Bicicleta**);
 void separarListaUsuarios(int* i, int* j, int* contador, char linea[], char Datos[6][200]);
 void limpiarDatos(char Datos[6][200]);
 void MenuAdministrador(Biciestacion**, Bicicleta**, User**);
-void MenuUsuario(Biciestacion**, Bicicleta**, User**);
+void MenuUsuario(Biciestacion**, Bicicleta**, User**, long);
 void altaBiciestacion(Biciestacion**);
 void altaBici(Bicicleta**, Biciestacion**);
 void altaUsuarios(User**);
@@ -101,7 +101,7 @@ int main(int argc, char *argv[]) {
         MenuAdministrador(&ListaBiciestacion, &ListaBicis, &ListaUsuarios);
       }
       if (TipoUsuario == 0) {
-        MenuUsuario(&ListaBiciestacion, &ListaBicis, &ListaUsuarios);
+        MenuUsuario(&ListaBiciestacion, &ListaBicis, &ListaUsuarios, IdUsuario);
       }
     }
     else
@@ -235,15 +235,16 @@ void MenuAdministrador(Biciestacion** ListaBiciestaciones, Bicicleta** ListaBici
   getchar();
   MenuAdministrador(ListaBiciestaciones, ListaBicis, ListaUsuarios);
 }
-void MenuUsuario(Biciestacion** ListaBiciestaciones, Bicicleta** ListaBicis, User** ListaUsuarios){
+void MenuUsuario(Biciestacion** ListaBiciestaciones, Bicicleta** ListaBicis, User** ListaUsuarios, long Usuario){
   system("clear");
+  char opcion;
   printf("Ha iniciado sesion correctamente\n\n");
   printf("\ta. Rentar una bicicleta.\n");
   printf("\tb. Estacionar una bicicleta.\n");
-  printf("\tc. Mostrar el saldo.\n\n");
+  printf("\tc. Mostrar saldo.\n");
   printf("\td. Salir del sistema.\n\n");
   printf("Ingresar una opcion: ");
-  char opcion;
+  scanf("%c", &opcion);
   switch (opcion) {
     case 'a':
       break;
@@ -263,7 +264,7 @@ void MenuUsuario(Biciestacion** ListaBiciestaciones, Bicicleta** ListaBicis, Use
   printf("Presiona enter para volver al menu...");
   __fpurge(stdin);
   getchar();
-  MenuUsuario(ListaBiciestaciones, ListaBicis, ListaUsuarios);
+  MenuUsuario(ListaBiciestaciones, ListaBicis, ListaUsuarios, Usuario);
 }
 void leerListaUsuarios(User** Lista){
   char linea[500], Datos[6][200];
