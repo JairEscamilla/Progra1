@@ -31,6 +31,7 @@ typedef struct defBici{
   long rentas;
   char Timestamp[50];
   int esrentada;
+  long esrentadapor;
   struct defBici* siguiente;
 }Bicicleta;
 //******************************************************************************
@@ -66,6 +67,8 @@ void eliminarBiciestacion(Biciestacion**, Bicicleta**);
 void deleteBiciestacion(Biciestacion**, Bicicleta**, char[]);
 void eliminarBici(Bicicleta**);
 void deleteBici(Bicicleta**, char[]);
+void eliminarUsuario(User**, Bicicleta**);
+void deleteUsuario(User**, Bicicleta**, char[]);
 void liberarMemoria(User**);
 //******************************************************************************
 
@@ -212,7 +215,7 @@ void MenuAdministrador(Biciestacion** ListaBiciestaciones, Bicicleta** ListaBici
       altaUsuarios(ListaUsuarios);
       break;
     case 'h':
-      printf("Baja de un usuario\n");
+      eliminarUsuario(ListaUsuarios, ListaBicis);
       break;
     case 'i':
       printf("Hasta pronto\nVuelva pronto\n");
@@ -546,6 +549,7 @@ void anadirBici(int id, char NumeroBici[], Bicicleta** Lista, Biciestacion** Lis
   strcpy(Nueva->Timestamp, "NULL");
   Nueva->Biciestacion = numeroBiciestacion;
   Nueva->esrentada = 0;
+  Nueva->esrentadapor = 0;
   Nueva->siguiente = NULL;
   while(aux != NULL){
     if(Nueva->Biciestacion == aux->NumBiciestacion)
@@ -825,6 +829,60 @@ void deleteBici(Bicicleta** ListaBicis, char numero[]){
     }
   }
 }
+void eliminarUsuario(User** ListaUsuarios, Bicicleta** ListaBicis){
+  system("clear");
+  char numero[4], error[100];
+  int validacion = 1, validacion2 = 1;
+  printf("\t\tBaja de un usuario\n");
+  while(validacion || validacion2){
+    validacion = Pedir_datos(numero, "numero de usuario a eliminar", 3);
+    validacion2 = validarNumeros(numero, error);
+    if(strlen(error) != 0)
+      puts(error);
+    error[0] = '\0';
+  }
+  deleteUsuario(ListaUsuarios, ListaBicis, numero);
+}
+void deleteUsuario(User** ListaUsuarios, Bicicleta** ListaBicis, char numero[]){
+  int found = 0, i = 0;
+  User* aux = *ListaUsuarios, *aux3 = *ListaUsuarios, *ant = NULL;
+  Bicicleta* aux2 = *ListaBicis;
+  int cuenta = 0;
+  while(aux != NULL){
+    if(aux->UserNumber == atoi(numero))
+      found = 1;
+    aux = aux->siguiente;
+  }
+  if(found == 0)
+    printf("No se puede dar de baja el usuario, ya que el usuario introducido no existe\n");
+  else{
+    while(aux2 != NULL){
+      if(aux2->esrentadapor == atoi(numero))
+        cuenta++;
+      aux2 = aux2->siguiente;
+    }
+    if(cuenta != 0)
+      printf("No se puede dar de baja el usuario, ya que esta rentando una bicicleta\n");
+    else{
+      while(aux3 != NULL && aux3->UserNumber != atoi(numero)) {
+        i++;
+        ant = aux3;
+        aux3 = aux3->siguiente;
+      }
+      if(i == 0 && ant == NULL)
+        remove("login.txt");
+      if(aux3 != NULL){
+        if(ant != NULL){
+          ant->siguiente = aux3->siguiente;
+        }else{
+          *ListaUsuarios = aux3->siguiente;
+        }
+        free(aux3);
+      }
+      printf("Se ha eliminado correctamente el usuario seleccionado\n");
+    }
+  }
+}
 void imprimirArchivos(Biciestacion** ListaBicis, Bicicleta** ListaBicicletas, User** ListaUsuarios){
   Biciestacion* aux = *ListaBicis;
   Bicicleta* aux2 = *ListaBicicletas;
@@ -837,7 +895,7 @@ void imprimirArchivos(Biciestacion** ListaBicis, Bicicleta** ListaBicicletas, Us
   fclose(Archivo);
   Archivo = fopen("bicis.txt", "wt");
   while(aux2 != NULL){
-    fprintf(Archivo, "%ld/%ld/%ld/%s/%d/x/\n", aux2->NumeroBici, aux2->Biciestacion, aux2->rentas, aux2->Timestamp, aux2->esrentada);
+    fprintf(Archivo, "%ld/%ld/%ld/%s/%d/%ld/\n", aux2->NumeroBici, aux2->Biciestacion, aux2->rentas, aux2->Timestamp, aux2->esrentada, aux2->esrentadapor);
     aux2 = aux2->siguiente;
   }
   fclose(Archivo);
