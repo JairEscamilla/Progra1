@@ -442,25 +442,30 @@ void altaBici(Bicicleta** Lista, Biciestacion** ListaBiciestaciones){ // Funcion
     printf("%ld\n", auxiliar->NumeroBici);
     id = auxiliar->NumeroBici +1;
   }
+  remove("bicis.txt");
   Archivo = fopen("bicis.txt", "at");
   system("clear");
   printf("\t\tDar de alta una nueva bicicleta\n");
   printf("\n");
+  if(*ListaBiciestaciones == NULL)
+    printf("No puedes dar de alta una bici, ya que no hay biciestaciones\n");
   // Pedimos los datos
-  while(LBiciestaciones != NULL){
-    printf("\t%ld-> %s\n", LBiciestaciones->NumBiciestacion, LBiciestaciones->NombreGenerico);
-    LBiciestaciones = LBiciestaciones->siguiente;
+  else{
+    while(LBiciestaciones != NULL){
+      printf("\t%ld-> %s\n", LBiciestaciones->NumBiciestacion, LBiciestaciones->NombreGenerico);
+      LBiciestaciones = LBiciestaciones->siguiente;
+    }
+    printf("\n");
+    while(validacion || validacion2){
+      validacion = Pedir_datos(NumBiciestacion, "de la lista anterior, el numero de biciestacion", 3);
+      validacion2 = validarNumeros(NumBiciestacion, error);
+      if(strlen(error) != 0)
+        puts(error);
+      error[0] = '\0';
+    }
+    anadirBici(id, NumBiciestacion, Lista, ListaBiciestaciones); // Agregamos el nodo a la lista
+    bitacora("202", id,  0, 0);
   }
-  printf("\n");
-  while(validacion || validacion2){
-    validacion = Pedir_datos(NumBiciestacion, "de la lista anterior, el numero de biciestacion", 3);
-    validacion2 = validarNumeros(NumBiciestacion, error);
-    if(strlen(error) != 0)
-      puts(error);
-    error[0] = '\0';
-  }
-  anadirBici(id, NumBiciestacion, Lista, ListaBiciestaciones); // Agregamos el nodo a la lista
-  bitacora("202", id,  0, 0);
   fclose(Archivo);
 } // Funcion que da de alta una bicicleta en una biciestacion
 void altaUsuarios(User** Lista){ // Funcion que da de alta a un usuario
@@ -718,30 +723,34 @@ void reasignarBicis(Bicicleta** ListaBicis, Biciestacion** ListaBiciestaciones){
   Bicicleta* aux2 = *ListaBicis;
   char Numero[4], NumBici[4], error[100];
   int validacion = 1, validacion2 = 1;
-  printf("Listado de bicis:\n");
-  while(aux2 != NULL){
-    if(aux2->Biciestacion != 0)
-      printf("\tNumero de bici: %ld. Pertenece a biciestacion numero: %ld\n", aux2->NumeroBici, aux2->Biciestacion);
-    aux2 = aux2->siguiente;
+  if(*ListaBicis == NULL)
+    printf("Actualmente no hay bicicletas registradas\n");
+  else{
+    printf("Listado de bicicletas:\n");
+    while(aux2 != NULL){
+      if(aux2->Biciestacion != 0)
+        printf("\tNumero de bici: %ld. Pertenece a biciestacion numero: %ld\n", aux2->NumeroBici, aux2->Biciestacion);
+      aux2 = aux2->siguiente;
+    }
+    printf("\n");
+    while(validacion || validacion2){
+      validacion = Pedir_datos(Numero, "numero de bicicleta", 3);
+      validacion2= validarNumeros(Numero, error);
+      if(strlen(error) != 0)
+        puts(error);
+      error[0] = '\0';
+    }
+    validacion = 1;
+    validacion2 = 1;
+    while(validacion || validacion2){
+      validacion = Pedir_datos(NumBici, "numero de biciestacion a la que se desea reasignar la bicicleta", 3);
+      validacion2= validarNumeros(NumBici, error);
+      if(strlen(error) != 0)
+        puts(error);
+      error[0] = '\0';
+    }
+    reasignar(Numero, NumBici, ListaBicis, ListaBiciestaciones);
   }
-  printf("\n");
-  while(validacion || validacion2){
-    validacion = Pedir_datos(Numero, "numero de bicicleta", 3);
-    validacion2= validarNumeros(Numero, error);
-    if(strlen(error) != 0)
-      puts(error);
-    error[0] = '\0';
-  }
-  validacion = 1;
-  validacion2 = 1;
-  while(validacion || validacion2){
-    validacion = Pedir_datos(NumBici, "numero de biciestacion a la que se desea reasignar la bicicleta", 3);
-    validacion2= validarNumeros(NumBici, error);
-    if(strlen(error) != 0)
-      puts(error);
-    error[0] = '\0';
-  }
-  reasignar(Numero, NumBici, ListaBicis, ListaBiciestaciones);
 }// Pide los datos para reasignar las bicis
 void reasignar(char Numero[],char NumBici[],Bicicleta** ListaBicis,Biciestacion** ListaBiciestaciones){
   Biciestacion* aux = *ListaBiciestaciones;
@@ -821,14 +830,18 @@ void eliminarBiciestacion(Biciestacion** ListaBiciestaciones, Bicicleta** ListaB
   int validacion = 1, validacion2 = 1;
   long Nbitacora;
   printf("\t\tBaja de una biciestacion\n");
-  while(validacion || validacion2){
-    validacion = Pedir_datos(numero, "biciestacion a eliminar", 3);
-    validacion2 = validarNumeros(numero, error);
-    if(strlen(error) != 0)
-      puts(error);
-    error[0] = '\0';
+  if(*ListaBiciestaciones == NULL)
+    printf("Actualmente no hay biciestaciones registradas\n");
+  else{
+    while(validacion || validacion2){
+      validacion = Pedir_datos(numero, "biciestacion a eliminar", 3);
+      validacion2 = validarNumeros(numero, error);
+      if(strlen(error) != 0)
+        puts(error);
+      error[0] = '\0';
+    }
+    deleteBiciestacion(ListaBiciestaciones, ListaBicis, numero);
   }
-  deleteBiciestacion(ListaBiciestaciones, ListaBicis, numero);
 }// Pide datos para eliminar biciestacion
 void deleteBiciestacion(Biciestacion** ListaBiciestaciones, Bicicleta** ListaBicis, char numero[]){
   int found = 0, i = 0;
@@ -880,7 +893,10 @@ void eliminarBici(Bicicleta** Lista){
   if(*Lista != NULL){
     printf("Lista de bicicletas: \n\n");
     while(aux != NULL){
-      printf("\t\tNumero de bici: %ld. Pertenece a biciestacion numero: %ld\n", aux->NumeroBici, aux->Biciestacion);
+      if(aux->Biciestacion == 0)
+        printf("\t\tNumero de bici: %ld. Esta siendo rentada\n", aux->NumeroBici);
+      else
+        printf("\t\tNumero de bici: %ld. Pertenece a biciestacion numero: %ld\n", aux->NumeroBici, aux->Biciestacion);
       aux = aux->siguiente;
     }
     printf("\n");
@@ -1047,7 +1063,7 @@ void rentar(Bicicleta** ListaBicicletas, char numero[], long Usuario){
     aux->esrentada = 1;
     aux->esrentadapor = Usuario;
     aux->rentas = aux->rentas+1;
-    aux->Biciestacion = 0;
+    //aux->Biciestacion = 0;
     Timestamp(aux->Timestamp);
     printf("La bicicleta esta siendo rentada apartir de ahora\n");
   }
