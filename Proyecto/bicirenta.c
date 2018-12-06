@@ -11,7 +11,7 @@ typedef struct defLogin{
   char Nombre[50];
   char Direccion[200];
   char Contrasenia[50];
-  long TarjetaCredito;
+  char TarjetaCredito[17];
   long UserNumber;
   int Flag;
   struct defLogin* siguiente;
@@ -22,7 +22,7 @@ typedef struct defBiciestacion{
   char NombreGenerico[100];
   char Calle[50];
   int Numero;
-  int CP;
+  char CP[6];
   char Ciudad[50];
   struct defBiciestacion* siguiente;
 }Biciestacion;
@@ -152,10 +152,10 @@ void validar_archivo_login(){
     strcpy(Usuario.Nombre, "Ibero");
     strcpy(Usuario.Direccion, "Prolongacion Paseo de la Reforma");
     strcpy(Usuario.Contrasenia, "c123");
-    Usuario.TarjetaCredito = 1234567;
+    strcpy(Usuario.TarjetaCredito, "1234567891156489");
     Usuario.UserNumber = 1;
     Usuario.Flag = 1;
-    fprintf(Archivo, "%s/%s/%s/%ld/%ld/%d/\n", Usuario.Nombre, Usuario.Direccion, Usuario.Contrasenia, Usuario.TarjetaCredito, Usuario.UserNumber, Usuario.Flag);
+    fprintf(Archivo, "%s/%s/%s/%s/%ld/%d/\n", Usuario.Nombre, Usuario.Direccion, Usuario.Contrasenia, Usuario.TarjetaCredito, Usuario.UserNumber, Usuario.Flag);
     fclose(Archivo);
   }
 }
@@ -195,7 +195,7 @@ void MostrarLista(User* Lista){
     printf("Numero de usuario: %ld\n", aux->UserNumber);
     printf("\tNombre del usuario: %s\n", aux->Nombre);
     printf("\tDireccion del usuario: %s\n", aux->Direccion);
-    printf("\tNumero de tarjeta de credito: %ld\n", aux->TarjetaCredito);
+    printf("\tNumero de tarjeta de credito: %s\n", aux->TarjetaCredito);
     printf("\tTipo de cuenta: %d\n", aux->Flag);
     printf("\n\n");
     aux = aux->siguiente;
@@ -319,7 +319,7 @@ void leerListaUsuarios(User** Lista){
     strcpy(Usuario->Nombre, Datos[0]);
     strcpy(Usuario->Direccion, Datos[1]);
     strcpy(Usuario->Contrasenia, Datos[2]);
-    Usuario->TarjetaCredito = atoi(Datos[3]);
+    strcpy(Usuario->TarjetaCredito, Datos[3]);
     Usuario->UserNumber = atoi(Datos[4]);
     Usuario->Flag = atoi(Datos[5]);
     Usuario->siguiente = NULL;
@@ -356,7 +356,7 @@ void limpiarDatos(char Datos[6][200]){
 void altaBiciestacion(Biciestacion** Lista){
   FILE* Archivo;
   Biciestacion Estacion, *auxiliar = *Lista;
-  char numero[4], numeroTotal[3], cp[5], error[50], renglon[500], basura[100];
+  char numero[5], numeroTotal[3], cp[5], error[50], renglon[500], basura[100];
   int validacion = 1, validacion2 = 1, id = 0;
   error[0] = '\0';
   numero[0] = '\0';
@@ -375,7 +375,7 @@ void altaBiciestacion(Biciestacion** Lista){
   while(Pedir_datos(Estacion.NombreGenerico, "nombre generico de biciestacion", 100));
   while(Pedir_datos(Estacion.Calle, "calle de la biciestacion", 50));
   while(validacion || validacion2){
-    validacion = Pedir_datos(numero, "numero (numeracion de la calle)", 2);
+    validacion = Pedir_datos(numero, "numero (numeracion de la calle)", 3);
     validacion2 = validarNumeros(numero, error);
     if(strlen(error) != 0)
       puts(error);
@@ -405,7 +405,7 @@ void altaBiciestacion(Biciestacion** Lista){
     error[0] = '\0';
   }
   anadirBiciestacion(id, Estacion.NombreGenerico, Estacion.Calle, numero, cp, Estacion.Ciudad, Lista);
-  printf("Se ha agregado correctamente la biciestacion\n");
+  printf("\nSe ha agregado correctamente la biciestacion\n");
   bitacora("101", id, 0, 0);
   fclose(Archivo);
 }
@@ -448,7 +448,7 @@ void altaBici(Bicicleta** Lista, Biciestacion** ListaBiciestaciones){
 void altaUsuarios(User** Lista){
   FILE* Archivo;
   User Usuario, *auxiliar = *Lista, *auxiliar2 = *Lista;
-  char tarjeta[9], error[100], TipoUsuario[2];
+  char tarjeta[17], error[100], TipoUsuario[2];
   int validacion = 1, validacion2 = 1, validacion3 = 1, id = 0;
   Archivo = fopen("login.txt", "rt");
   if (Archivo == NULL) {
@@ -486,10 +486,10 @@ void altaUsuarios(User** Lista){
   validacion = 1;
   validacion2 = 1;
   while(validacion || validacion2 || validacion3){
-    validacion = Pedir_datos(tarjeta, "numero de tarjeta de credito", 8);
+    validacion = Pedir_datos(tarjeta, "numero de tarjeta de credito", 16);
     validacion2= validarNumeros(tarjeta, error);
     while(auxiliar2 != NULL){
-      if(auxiliar2->TarjetaCredito == atoi(tarjeta)){
+      if(strcmp(auxiliar2->TarjetaCredito, tarjeta) == 0){
         __fpurge(stdin);
         printf("Esta tarjeta ya esta registrada\n");
         validacion3 = 1;
@@ -498,16 +498,17 @@ void altaUsuarios(User** Lista){
       }
       auxiliar2 = auxiliar2->siguiente;
     }
-    if(strlen(tarjeta) != 8){
+    if(strlen(tarjeta) != 16){
       validacion = 1;
-      printf("Este campo solo admite 8 caracteres\n");
+      printf("Este campo solo admite 16 caracteres\n");
     }
-    if(strlen(error) != 0)
-      puts(error);
+    if(validacion2)
+      printf("Este campo solo admite numeros\n");
     error[0] = '\0';
   }
   validacion = 1;
   while(validacion){
+    __fpurge(stdin);
     printf("Ingresar tipo de usuario (1 para administrador o 0 para usuario normal): ");
     TipoUsuario[0] = getchar();
     if(TipoUsuario[0] != '1' && TipoUsuario[0] != '0'){
@@ -562,7 +563,7 @@ void cargarListaBiciestacion(Biciestacion** Lista){
       strcpy(Nueva->NombreGenerico, Datos[1]);
       strcpy(Nueva->Calle, Datos[2]);
       Nueva->Numero = atoi(Datos[3]);
-      Nueva->CP = atoi(Datos[4]);
+      strcpy(Nueva->CP, Datos[4]);
       strcpy(Nueva->Ciudad, Datos[5]);
       Nueva->siguiente = NULL;
       if (*Lista == NULL) {
@@ -657,7 +658,7 @@ void anadirBiciestacion(int id, char NombreGenerico[], char Calle[], char numero
   strcpy(Nueva->NombreGenerico, NombreGenerico);
   strcpy(Nueva->Calle, Calle);
   Nueva->Numero = atoi(numero);
-  Nueva->CP = atoi(cp);
+  strcpy(Nueva->CP, cp);
   strcpy(Nueva->Ciudad, Ciudad);
   Nueva->siguiente = NULL;
   if (*Lista == NULL) {
@@ -676,7 +677,7 @@ void anadirUsuario(int id, char Nombre[], char Direccion[], char Contrasenia[], 
   strcpy(Nuevo->Nombre, Nombre);
   strcpy(Nuevo->Direccion, Direccion);
   strcpy(Nuevo->Contrasenia, Contrasenia);
-  Nuevo->TarjetaCredito = atoi(tarjeta);
+  strcpy(Nuevo->TarjetaCredito, tarjeta);
   Nuevo->UserNumber = id;
   Nuevo->Flag = atoi(TipoUsuario);
   Nuevo->siguiente = NULL;
@@ -1210,7 +1211,7 @@ void imprimirArchivos(Biciestacion** ListaBicis, Bicicleta** ListaBicicletas, Us
   User* aux3 = *ListaUsuarios;
   FILE* Archivo = fopen("biciestaciones.txt", "wt");
   while (aux != NULL) {
-    fprintf(Archivo, "%ld/%s/%s/%d/%d/%s/\n", aux->NumBiciestacion, aux->NombreGenerico, aux->Calle, aux->Numero, aux->CP, aux->Ciudad);
+    fprintf(Archivo, "%ld/%s/%s/%d/%s/%s/\n", aux->NumBiciestacion, aux->NombreGenerico, aux->Calle, aux->Numero, aux->CP, aux->Ciudad);
     aux = aux->siguiente;
   }
   fclose(Archivo);
@@ -1222,7 +1223,7 @@ void imprimirArchivos(Biciestacion** ListaBicis, Bicicleta** ListaBicicletas, Us
   fclose(Archivo);
   Archivo = fopen("login.txt", "wt");
   while (aux3 != NULL) {
-    fprintf(Archivo, "%s/%s/%s/%ld/%ld/%d/\n", aux3->Nombre, aux3->Direccion, aux3->Contrasenia, aux3->TarjetaCredito, aux3->UserNumber, aux3->Flag);
+    fprintf(Archivo, "%s/%s/%s/%s/%ld/%d/\n", aux3->Nombre, aux3->Direccion, aux3->Contrasenia, aux3->TarjetaCredito, aux3->UserNumber, aux3->Flag);
     aux3 = aux3->siguiente;
   }
   fclose(Archivo);
