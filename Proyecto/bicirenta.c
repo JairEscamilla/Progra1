@@ -430,20 +430,24 @@ void altaBici(Bicicleta** Lista, Biciestacion** ListaBiciestaciones){ // Funcion
   FILE* Archivo;
   Bicicleta *auxiliar = *Lista;
   char NumBiciestacion[4], error[100];
-  Archivo = fopen("bicis.txt", "rt");
+  //Archivo = fopen("bicis.txt", "rt");
   int id = 0;
   Biciestacion* LBiciestaciones = *ListaBiciestaciones;
   int validacion = 1, validacion2 = 1;
-  if (Archivo == NULL) { // Verificamos el archivo
+  //if (Archivo == NULL) { // Verificamos el archivo
+
+  //}else{
+  if(*Lista == NULL)
     id = 1;
-  }else{
+  else{
     while(auxiliar->siguiente != NULL)
       auxiliar = auxiliar->siguiente;
     printf("%ld\n", auxiliar->NumeroBici);
     id = auxiliar->NumeroBici +1;
   }
-  remove("bicis.txt");
-  Archivo = fopen("bicis.txt", "at");
+    //fclose(Archivo);
+  //}
+
   system("clear");
   printf("\t\tDar de alta una nueva bicicleta\n");
   printf("\n");
@@ -466,7 +470,6 @@ void altaBici(Bicicleta** Lista, Biciestacion** ListaBiciestaciones){ // Funcion
     anadirBici(id, NumBiciestacion, Lista, ListaBiciestaciones); // Agregamos el nodo a la lista
     bitacora("202", id,  0, 0);
   }
-  fclose(Archivo);
 } // Funcion que da de alta una bicicleta en una biciestacion
 void altaUsuarios(User** Lista){ // Funcion que da de alta a un usuario
   FILE* Archivo;
@@ -512,13 +515,12 @@ void altaUsuarios(User** Lista){ // Funcion que da de alta a un usuario
   while(validacion || validacion2 || validacion3){
     validacion = Pedir_datos(tarjeta, "numero de tarjeta de credito", 16);
     validacion2= validarNumeros(tarjeta, error);
-    while(auxiliar2 != NULL){
+    validacion3 = 0;
+    while(auxiliar2 != NULL && validacion3 == 0){
       if(strcmp(auxiliar2->TarjetaCredito, tarjeta) == 0){
         __fpurge(stdin);
         printf("Esta tarjeta ya esta registrada\n");
         validacion3 = 1;
-      }else{
-        validacion3 = 0;
       }
       auxiliar2 = auxiliar2->siguiente;
     }
@@ -635,6 +637,7 @@ void cargarListaBicis(Bicicleta** Lista){
   }
 }// Funcion para cargar la lista de bicis
 void anadirBici(int id, char NumeroBici[], Bicicleta** Lista, Biciestacion** ListaBiciestaciones){
+
   Bicicleta* Nueva = (Bicicleta*)malloc(sizeof(Bicicleta));
   Biciestacion* aux = *ListaBiciestaciones;
   Bicicleta* ListaBicis = *Lista;
