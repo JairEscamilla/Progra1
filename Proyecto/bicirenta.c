@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <math.h>
 // Definimos las estructuras
 //******************************************************************************
 // Estructura de un Usuario
@@ -75,6 +76,9 @@ void rentar(Bicicleta**, char[], long);
 void devolverBici(long, Biciestacion**, Bicicleta**);
 void devolver(long, Bicicleta**, Biciestacion**, char[]);
 void Timestamp(char[]);
+int restarHoras(char[]);
+void mostrarSaldo(long);
+void agregarMulta(long);
 void liberarMemoria(User**);
 //******************************************************************************
 
@@ -257,6 +261,7 @@ void MenuUsuario(Biciestacion** ListaBiciestaciones, Bicicleta** ListaBicis, Use
       devolverBici(Usuario, ListaBiciestaciones, ListaBicis);
       break;
     case 'c':
+      mostrarSaldo(Usuario);
       break;
     case 'd':
       printf("Hasta pronto\nVuelva pronto\n");
@@ -1019,6 +1024,7 @@ void devolverBici(long Usuario, Biciestacion** ListaBiciestaciones, Bicicleta** 
 void devolver(long Usuario, Bicicleta** ListaBicis, Biciestacion** ListaBiciestaciones, char numero[]){
   Biciestacion* aux = *ListaBiciestaciones;
   Bicicleta* aux2 = *ListaBicis;
+  int Multa = 0;
   int NumeroD = 0, found = 0, found2 = 0;
   while(aux != NULL && found == 0){
     NumeroD = 10 - obtenerNumerorentas(aux->NumBiciestacion, ListaBicis);
@@ -1036,11 +1042,70 @@ void devolver(long Usuario, Bicicleta** ListaBicis, Biciestacion** ListaBiciesta
       else
         aux2 = aux2->siguiente;
     }
+    Multa = restarHoras(aux2->Timestamp);
     strcpy(aux2->Timestamp, "NULL");
     aux2->esrentada = 0;
     aux2->esrentadapor = 0;
     aux2->Biciestacion = atoi(numero);
+    if(Multa){
+      printf("Tienes una multa extra de $65 por pasarte del tiempo\n");
+      agregarMulta(Usuario);
+    }
     printf("Se ha devuelto de manera correcta la bicicleta\n");
+  }
+}
+int restarHoras(char Horainicial[]){
+  int horas, minutos, segundos;
+  int horasF, minutosF, segundosF, Dhoras, Dminutos;
+  int Haymulta = 0;
+  long fecha;
+  time_t rawtime;
+  struct tm *timeinfo;
+  char Timestamp[100];
+  time(&rawtime);
+  timeinfo = localtime(&rawtime);
+  horasF = timeinfo->tm_hour;
+  minutosF = timeinfo->tm_min;
+  segundosF = timeinfo->tm_sec;
+  sscanf(Horainicial, "%ld-%d:%d:%d", &fecha, &horas, &minutos, &segundos);
+  if(minutosF < minutos){
+    horasF--;
+    minutosF+= 60;
+  }
+  Dminutos = minutosF-minutos;
+  Dhoras = horasF - horas;
+  if(Dhoras > 0 || Dminutos > 30)
+    Haymulta = 1;
+  else{
+    if(Dminutos == 29 && (segundos + segundosF) > 60)
+      Haymulta = 1;
+  }
+  return Haymulta;
+}
+void agregarMulta(long Usuario){
+  FILE* Archivo = fopen("multas.txt", "at");
+  fprintf(Archivo, "%ld\n", Usuario);
+  fclose(Archivo);
+}
+void mostrarSaldo(long Usuario){
+  FILE* Archivo = fopen("multas.txt", "rt");
+  int Cuentamulta = 0;
+  int NumUser;
+  system("clear");
+  printf("\t\tMostrar saldo\n");
+  if(Archivo == NULL)
+    printf("Actualmente no tienes ninguna multa :)\n");
+  else{
+    while(!feof(Archivo)){
+      fscanf(Archivo, "%d\n", &NumUser);
+      if(NumUser == Usuario)
+        Cuentamulta += 65;
+    }
+    if (Cuentamulta == 0) {
+      printf("Actualmente no tienes ninguna multa :)\n");
+    }else{
+      printf("Actualmente cuentas con una multa de $%d\n", Cuentamulta);
+    }
   }
 }
 void imprimirArchivos(Biciestacion** ListaBicis, Bicicleta** ListaBicicletas, User** ListaUsuarios){
