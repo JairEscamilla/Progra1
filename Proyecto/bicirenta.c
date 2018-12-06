@@ -80,6 +80,8 @@ void Timestamp(char[]);
 int restarHoras(char[]);
 void mostrarSaldo(long);
 void agregarMulta(long);
+void creditos();
+void ayuda();
 void liberarMemoria(User**);
 //******************************************************************************
 
@@ -96,15 +98,30 @@ int main(int argc, char *argv[]) {
   Bicicleta* ListaBicis = NULL;
   cargarListaBiciestacion(&ListaBiciestacion);
   cargarListaBicis(&ListaBicis);
+  leerListaUsuarios(&ListaUsuarios);
   if (argc != 1) {
-    printf("Esto se va a desarrollar despues\n");
+    if(argc == 2){
+      if(strcmp(argv[1], "-c") == 0)
+        creditos();
+      else{
+        if(strcmp(argv[1], "-h") == 0)
+          ayuda();
+        else{
+          if(strcmp(argv[1], "-usu") == 0)
+            MostrarLista(ListaUsuarios);
+          else{
+            printf("Comando no reconocido\n");
+          }
+        }
+      }
+    }else
+      printf("Solo puede introducir un parametro!\n");
   }else{
     validar_archivo_login();
     system("clear");
     while(Pedir_datos(Nombre, "nombre", 50));
     system("clear");
     while(Pedir_datos(Password, "password", 50));
-    leerListaUsuarios(&ListaUsuarios);
     if(iniciar_sesion(&TipoUsuario, Nombre, Password, ListaUsuarios, &IdUsuario)){
       if (TipoUsuario == 1) {
         bitacora("Login", 0, 0, IdUsuario);
@@ -133,7 +150,7 @@ void validar_archivo_login(){
   if (Arch == NULL) {
     Archivo = fopen("login.txt", "wt");
     strcpy(Usuario.Nombre, "Ibero");
-    strcpy(Usuario.Direccion, "Prolongacion Paseo de la Reforma 880, Lomas de Santa Fe, 01219 Ciudad de Mexico, CDMX");
+    strcpy(Usuario.Direccion, "Prolongacion Paseo de la Reforma");
     strcpy(Usuario.Contrasenia, "c123");
     Usuario.TarjetaCredito = 1234567;
     Usuario.UserNumber = 1;
@@ -171,10 +188,16 @@ void liberarMemoria(User** Lista){
   }
 }
 void MostrarLista(User* Lista){
+  system("clear");
   User* aux = Lista;
+  printf("\t\tListado de todos los usuarios catalogados en el servicio\n\n");
   while (aux != NULL) {
-    printf("Nombre lista: %s\nPassword lista: %s\n", aux->Nombre, aux->Contrasenia);
-    printf("Direccion: %s\n", aux->Direccion);
+    printf("Numero de usuario: %ld\n", aux->UserNumber);
+    printf("\tNombre del usuario: %s\n", aux->Nombre);
+    printf("\tDireccion del usuario: %s\n", aux->Direccion);
+    printf("\tNumero de tarjeta de credito: %ld\n", aux->TarjetaCredito);
+    printf("\tTipo de cuenta: %d\n", aux->Flag);
+    printf("\n\n");
     aux = aux->siguiente;
   }
 }
@@ -696,12 +719,11 @@ void reasignarBicis(Bicicleta** ListaBicis, Biciestacion** ListaBiciestaciones){
     error[0] = '\0';
   }
   reasignar(Numero, NumBici, ListaBicis, ListaBiciestaciones);
-  bitacora("203", atoi(Numero), atoi(NumBici), 0);
 }
 void reasignar(char Numero[],char NumBici[],Bicicleta** ListaBicis,Biciestacion** ListaBiciestaciones){
   Biciestacion* aux = *ListaBiciestaciones;
   Bicicleta* aux2 = *ListaBicis, *aux3 = *ListaBicis;
-  int found = 0, cantidadBicis = 0;
+  int found = 0, cantidadBicis = 0, contador = 0;
   while(aux != NULL){
     if(aux->NumBiciestacion == atoi(NumBici))
       found = 1;
@@ -719,11 +741,18 @@ void reasignar(char Numero[],char NumBici[],Bicicleta** ListaBicis,Biciestacion*
       printf("No se puede realizar la reasignacion debido a que la biciestacion seleccionada se encuentra llena\n");
     }else{
       while(aux3 != NULL){
-        if(aux3->NumeroBici == atoi(Numero))
-          aux3->Biciestacion = atoi(NumBici);
-        aux3 = aux3->siguiente;
+        if(aux3->NumeroBici == atoi(Numero) && aux3->esrentada == 0)
+          contador++;
+        else
+          aux3 = aux3->siguiente;
       }
-      printf("Reasignacion completada con exito\n");
+      if(contador == 1){
+        aux3->Biciestacion = atoi(NumBici);
+        bitacora("203", atoi(Numero), atoi(NumBici), 0);
+        printf("Reasignacion completada con exito\n");
+      }else{
+        printf("La bicicleta no puede ser reasignada porque actualmente esta siendo rentada\n");
+      }
     }
   }
 }
@@ -1133,6 +1162,44 @@ void bitacora(char Accion[], int Adicional1, int Adicional2, long User){
       fprintf(Archivo, "%s %s %d %d\n", Time, Accion, Adicional1, Adicional2);
   }
   fclose(Archivo);
+}
+void creditos(){
+  system("clear");
+    system("sleep 0.1");
+    printf("=================================================================\n");
+    system("sleep 0.1");
+    printf("d88888b  .o88b.  .d88b.         d8888b. d888888b  .o88b. d888888b\n");
+    system("sleep 0.1");
+    printf("88'     d8P  Y8 .8P  Y8.        88  `8D   `88'   d8P  Y8   `88'  \n");
+    system("sleep 0.1");
+    printf("88ooooo 8P      88    88        88oooY'    88    8P         88   \n");
+    system("sleep 0.1");
+    printf("88ooooo 8b      88    88        88ooob.    88    8b         88   \n");
+    system("sleep 0.1");
+    printf("88.     Y8b  d8 `8b  d8'        88   8D   .88.   Y8b  d8   .88.  \n");
+    system("sleep 0.1");
+    printf("Y88888P  `Y88P'  `Y88P'         Y8888P' Y888888P  `Y88P' Y888888P\n");
+    system("sleep 0.1");
+    printf("=================================================================\n");
+    system("sleep 0.1");
+    printf("==================     Desarrollado por      ====================\n");
+    system("sleep 0.1");
+    printf("==================      Jair Escamilla       ====================\n");
+    system("sleep 0.1");
+    printf("==================      Daniel Logvin        ====================\n");
+    system("sleep 0.1");
+    printf("==================      Carlos Iturralde     ====================\n");
+    system("sleep 0.1");
+    printf("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+    system("sleep 0.1");
+}
+void ayuda(){
+   system("clear");
+   printf("Comandos disponibles: \n");
+   printf(" $ bici.exe -h (Despliega el menú de ayuda al usuario)\n");
+   printf(" $ bici.exe -c (Despliega los créditos de los desarrolladores del sistema.)\n");
+   printf(" $ bici.exe -usu (Despliega el listado de todos los usuarios del servicio catalogados.)\n");
+   printf(" $ bici.exe (Inicia sesion.)\n");
 }
 void imprimirArchivos(Biciestacion** ListaBicis, Bicicleta** ListaBicicletas, User** ListaUsuarios){
   Biciestacion* aux = *ListaBicis;
