@@ -27,6 +27,7 @@ typedef struct defBiciestacion{
   struct defBiciestacion* siguiente;
 }Biciestacion;
 
+// Estructura de una biciestacion
 typedef struct defBici{
   long NumeroBici;
   long Biciestacion;
@@ -47,8 +48,8 @@ int iniciar_sesion(int*, char[], char[], User*, long*);
 void leerListaUsuarios(User**);
 void cargarListaBiciestacion(Biciestacion**);
 void cargarListaBicis(Bicicleta**);
-void separarListaUsuarios(int* i, int* j, int* contador, char linea[], char Datos[6][200]);
-void limpiarDatos(char Datos[6][200]);
+void separarListaUsuarios(int*, int*, int*, char[], char[6][200]);
+void limpiarDatos(char[6][200]);
 void MenuAdministrador(Biciestacion**, Bicicleta**, User**, long);
 void MenuUsuario(Biciestacion**, Bicicleta**, User**, long);
 void altaBiciestacion(Biciestacion**);
@@ -89,6 +90,7 @@ void liberarMemoria(User**, Bicicleta**, Biciestacion**);
 // Funcion principal
 //******************************************************************************
 int main(int argc, char *argv[]) {
+  // Declaracion de las variables a utilizar
   int TipoUsuario = 0;
   char Nombre[50];
   char Password[50];
@@ -96,58 +98,59 @@ int main(int argc, char *argv[]) {
   User* ListaUsuarios = NULL;
   Biciestacion* ListaBiciestacion = NULL;
   Bicicleta* ListaBicis = NULL;
-  validar_archivo_login();
+  validar_archivo_login(); // Validamos la existencia del archivo de usuarios
+  // Cargamos las listas dinamicas desde los archivos
   cargarListaBiciestacion(&ListaBiciestacion);
   cargarListaBicis(&ListaBicis);
   leerListaUsuarios(&ListaUsuarios);
-  if (argc != 1) {
+  if (argc != 1) { // Verificamos la cantidad de parametros pasados por terminal
     if(argc == 2){
-      if(strcmp(argv[1], "-c") == 0)
+      if(strcmp(argv[1], "-c") == 0) // En caso de obtener como parametro -c
         creditos();
       else{
-        if(strcmp(argv[1], "-h") == 0)
+        if(strcmp(argv[1], "-h") == 0) // Mostrar la ayuda
           ayuda();
         else{
-          if(strcmp(argv[1], "-usu") == 0)
+          if(strcmp(argv[1], "-usu") == 0) // Despliega la lista de usuarios
             MostrarLista(ListaUsuarios);
           else{
-            printf("Comando no reconocido\n");
+            printf("Comando no reconocido\n"); // En caso de no encontrar ninguna opcion
           }
         }
       }
     }else
-      printf("Solo puede introducir un parametro!\n");
-  }else{
+      printf("Solo puede introducir un parametro!\n"); // En caso de introducir mas de un parametros
+  }else{ // Ejecucion sin parametros del programa
     system("clear");
-    while(Pedir_datos(Nombre, "nombre", 50));
+    while(Pedir_datos(Nombre, "nombre", 49)); // Pedimos nombre
     system("clear");
-    while(Pedir_datos(Password, "password", 50));
-    if(iniciar_sesion(&TipoUsuario, Nombre, Password, ListaUsuarios, &IdUsuario)){
-      if (TipoUsuario == 1) {
-        bitacora("Login", 0, 0, IdUsuario);
+    while(Pedir_datos(Password, "password", 49)); // Pedimos password
+    if(iniciar_sesion(&TipoUsuario, Nombre, Password, ListaUsuarios, &IdUsuario)){ // Iniciamos sesion
+      if (TipoUsuario == 1) { // Inicio para administrador
+        bitacora("Login", 0, 0, IdUsuario); // Generamos la bitacora
         MenuAdministrador(&ListaBiciestacion, &ListaBicis, &ListaUsuarios, IdUsuario);
       }
-      if (TipoUsuario == 0) {
+      if (TipoUsuario == 0) { // Inicio para usuario normal
         MenuUsuario(&ListaBiciestacion, &ListaBicis, &ListaUsuarios, IdUsuario);
       }
     }
     else
-      printf("Fallo en la autenticacion\n");
+      printf("Fallo en la autenticacion\n"); // En caso de no haber encontrado ningun usuario con los datos introducidos
   }
 
-  liberarMemoria(&ListaUsuarios, &ListaBicis, &ListaBiciestacion);
+  liberarMemoria(&ListaUsuarios, &ListaBicis, &ListaBiciestacion); // Liberamos la memoria
   return 0;
 }
 //******************************************************************************
 
 // Desarrollo de las funciones
 //******************************************************************************
-void validar_archivo_login(){
+void validar_archivo_login(){ // Validamos que exista el archivo de login
   User Usuario;
   FILE* Arch;
   FILE* Archivo;
   Arch = fopen("login.txt", "rt");
-  if (Arch == NULL) {
+  if (Arch == NULL) { // En caso de no existir, se crea con datos predefinidos
     Archivo = fopen("login.txt", "wt");
     strcpy(Usuario.Nombre, "Ibero");
     strcpy(Usuario.Direccion, "Prolongacion Paseo de la Reforma");
@@ -159,7 +162,7 @@ void validar_archivo_login(){
     fclose(Archivo);
   }
 }
-int Pedir_datos(char Dato[], char NombreDato[], int longitud){
+int Pedir_datos(char Dato[], char NombreDato[], int longitud){ // Funcion que pide los datos y valida la extension de los mismos
   __fpurge(stdin);
   int i = 0;
   int status = 0;
@@ -167,20 +170,20 @@ int Pedir_datos(char Dato[], char NombreDato[], int longitud){
   i = 0;
   while ((Dato[i] = getchar()) != '\n' && status == 0) {
     if (i > longitud) {
-     printf("Haz sobrepasado el limite de caracteres!\n");
+     printf("Haz sobrepasado el limite de caracteres!\n"); // En caso de haber sobrepasado el limite
       Dato[i+1] = '\n';
       status = 1;
     }
     i++;
   }
-  if(i == 0){
+  if(i == 0){ // En caso de no haber escrito nada
     printf("Asegurate de escribir algo!\n");
     status = 1;
   }
   Dato[i] = '\0';
   return status;
 }
-void liberarMemoria(User** Lista, Bicicleta** Lista2, Biciestacion** Lista3){
+void liberarMemoria(User** Lista, Bicicleta** Lista2, Biciestacion** Lista3){ // Funcion que libera la memoria al finalizar el programa
   User* Proximo;
   Bicicleta* Proximo2;
   Biciestacion* Proximo3;
@@ -200,7 +203,7 @@ void liberarMemoria(User** Lista, Bicicleta** Lista2, Biciestacion** Lista3){
     *Lista3 = Proximo3;
   }
 }
-void MostrarLista(User* Lista){
+void MostrarLista(User* Lista){ // Mostramos la lista de usuarios
   system("clear");
   User* aux = Lista;
   printf("\t\tListado de todos los usuarios catalogados en el servicio\n\n");
@@ -214,11 +217,11 @@ void MostrarLista(User* Lista){
     aux = aux->siguiente;
   }
 }
-int iniciar_sesion(int* TipoUsuario, char Nombre[], char Password[], User* Lista, long* IdUsuario){
+int iniciar_sesion(int* TipoUsuario, char Nombre[], char Password[], User* Lista, long* IdUsuario){ // Funcionque inicia sesion
   User* aux = Lista;
   int inicio = 0;
   do{
-    if ((strcmp(Nombre, aux->Nombre) == 0) && (strcmp(Password, aux->Contrasenia) == 0)) {
+    if ((strcmp(Nombre, aux->Nombre) == 0) && (strcmp(Password, aux->Contrasenia) == 0)) { // En caso de encontrar el usuario, inicia sesion
       inicio = 1;
       *TipoUsuario = aux->Flag;
       *IdUsuario = aux->UserNumber;
@@ -227,7 +230,7 @@ int iniciar_sesion(int* TipoUsuario, char Nombre[], char Password[], User* Lista
   }while ((aux != NULL));
   return inicio;
 }
-void MenuAdministrador(Biciestacion** ListaBiciestaciones, Bicicleta** ListaBicis, User** ListaUsuarios, long User) {
+void MenuAdministrador(Biciestacion** ListaBiciestaciones, Bicicleta** ListaBicis, User** ListaUsuarios, long User) { // Menu para el administrador
   system("clear");
   char Opcion;
   printf("Ha iniciado sesion correctamente\n\n");
@@ -282,7 +285,7 @@ void MenuAdministrador(Biciestacion** ListaBiciestaciones, Bicicleta** ListaBici
   getchar();
   MenuAdministrador(ListaBiciestaciones, ListaBicis, ListaUsuarios, User);
 }
-void MenuUsuario(Biciestacion** ListaBiciestaciones, Bicicleta** ListaBicis, User** ListaUsuarios, long Usuario){
+void MenuUsuario(Biciestacion** ListaBiciestaciones, Bicicleta** ListaBicis, User** ListaUsuarios, long Usuario){ // Menu para el usuario
   system("clear");
   char opcion;
   printf("Ha iniciado sesion correctamente\n\n");
@@ -316,19 +319,19 @@ void MenuUsuario(Biciestacion** ListaBiciestaciones, Bicicleta** ListaBicis, Use
   getchar();
   MenuUsuario(ListaBiciestaciones, ListaBicis, ListaUsuarios, Usuario);
 }
-void leerListaUsuarios(User** Lista){
+void leerListaUsuarios(User** Lista){ // Funcion que lee la lista de usuarios
   char linea[500], Datos[6][200];
   int i, j = 0, contador = 0;
   FILE* Archivo = fopen("login.txt", "rt");
-  if (Archivo == NULL) {
+  if (Archivo == NULL) { // Verificamos que exista el archivo
     printf("Ha ocurrido un error, vuelva a intentar\n");
     exit(0);
   }
-  while (fgets(linea, 500, Archivo) != NULL) {
+  while (fgets(linea, 500, Archivo) != NULL) { // Leemos el archivo
     User* Usuario = (User*)malloc(sizeof(User));
     i = 0;
     contador = 0;
-    separarListaUsuarios(&i, &j, &contador, linea, Datos);
+    separarListaUsuarios(&i, &j, &contador, linea, Datos); // Separamos la linea leida
     strcpy(Usuario->Nombre, Datos[0]);
     strcpy(Usuario->Direccion, Datos[1]);
     strcpy(Usuario->Contrasenia, Datos[2]);
@@ -336,7 +339,7 @@ void leerListaUsuarios(User** Lista){
     Usuario->UserNumber = atoi(Datos[4]);
     Usuario->Flag = atoi(Datos[5]);
     Usuario->siguiente = NULL;
-    if (*Lista == NULL) {
+    if (*Lista == NULL) { // Se agrega el nodo
       *Lista = Usuario;
     }else{
       User* aux = *Lista;
@@ -360,12 +363,12 @@ void separarListaUsuarios(int* i, int* j, int* contador, char linea[], char Dato
     (*i)++;
     (*j)++;
   }
-}
+} // Funcion que separa una linea
 void limpiarDatos(char Datos[6][200]){
   for(int i = 0; i < 5; i++){
     Datos[i][0] = '\0';
   }
-}
+} // Funcion que limpia los datos de un array de cadenas
 void altaBiciestacion(Biciestacion** Lista){
   FILE* Archivo;
   Biciestacion Estacion, *auxiliar = *Lista;
@@ -375,13 +378,14 @@ void altaBiciestacion(Biciestacion** Lista){
   numero[0] = '\0';
   cp[0] = '\0';
   Archivo = fopen("biciestaciones.txt", "rt");
-  if (Archivo == NULL) {
+  if (Archivo == NULL) { // Obtenemos el identificador
     id = 1;
   }else{
     while(auxiliar->siguiente != NULL)
       auxiliar = auxiliar->siguiente;
     id = auxiliar->NumBiciestacion +1;
   }
+  // Pedimos datos
   Archivo = fopen("biciestaciones.txt", "at");
   system("clear");
   printf("\t\tDar de alta una nueva biciestacion\n");
@@ -417,12 +421,12 @@ void altaBiciestacion(Biciestacion** Lista){
       puts(error);
     error[0] = '\0';
   }
-  anadirBiciestacion(id, Estacion.NombreGenerico, Estacion.Calle, numero, cp, Estacion.Ciudad, Lista);
+  anadirBiciestacion(id, Estacion.NombreGenerico, Estacion.Calle, numero, cp, Estacion.Ciudad, Lista); //  Se anade el nodo a la lista de biciestaciones
   printf("\nSe ha agregado correctamente la biciestacion\n");
-  bitacora("101", id, 0, 0);
+  bitacora("101", id, 0, 0); // Bitacora
   fclose(Archivo);
-}
-void altaBici(Bicicleta** Lista, Biciestacion** ListaBiciestaciones){
+} // Funcion para dar de alta una biciestacion// Funcion que da de alta una biciestacion // Funcion para dar de alta la funcion
+void altaBici(Bicicleta** Lista, Biciestacion** ListaBiciestaciones){ // Funcion que da de alta una bici a una bieciestacion
   FILE* Archivo;
   Bicicleta *auxiliar = *Lista;
   char NumBiciestacion[4], error[100];
@@ -430,7 +434,7 @@ void altaBici(Bicicleta** Lista, Biciestacion** ListaBiciestaciones){
   int id = 0;
   Biciestacion* LBiciestaciones = *ListaBiciestaciones;
   int validacion = 1, validacion2 = 1;
-  if (Archivo == NULL) {
+  if (Archivo == NULL) { // Verificamos el archivo
     id = 1;
   }else{
     while(auxiliar->siguiente != NULL)
@@ -442,6 +446,7 @@ void altaBici(Bicicleta** Lista, Biciestacion** ListaBiciestaciones){
   system("clear");
   printf("\t\tDar de alta una nueva bicicleta\n");
   printf("\n");
+  // Pedimos los datos
   while(LBiciestaciones != NULL){
     printf("\t%ld-> %s\n", LBiciestaciones->NumBiciestacion, LBiciestaciones->NombreGenerico);
     LBiciestaciones = LBiciestaciones->siguiente;
@@ -454,17 +459,17 @@ void altaBici(Bicicleta** Lista, Biciestacion** ListaBiciestaciones){
       puts(error);
     error[0] = '\0';
   }
-  anadirBici(id, NumBiciestacion, Lista, ListaBiciestaciones);
+  anadirBici(id, NumBiciestacion, Lista, ListaBiciestaciones); // Agregamos el nodo a la lista
   bitacora("202", id,  0, 0);
   fclose(Archivo);
-}
-void altaUsuarios(User** Lista){
+} // Funcion que da de alta una bicicleta en una biciestacion
+void altaUsuarios(User** Lista){ // Funcion que da de alta a un usuario
   FILE* Archivo;
   User Usuario, *auxiliar = *Lista, *auxiliar2 = *Lista;
   char tarjeta[17], error[100], TipoUsuario[2];
   int validacion = 1, validacion2 = 1, validacion3 = 1, id = 0;
   Archivo = fopen("login.txt", "rt");
-  if (Archivo == NULL) {
+  if (Archivo == NULL) { // Obtenemos su identificador
     id = 1;
   }else{
     while(auxiliar->siguiente != NULL)
@@ -473,6 +478,7 @@ void altaUsuarios(User** Lista){
   }
   Archivo = fopen("login.txt", "at");
   system("clear");
+  // Pedimos datos
   printf("\t\tDar de alta un nuevo usuario\n");
   while(validacion || validacion2){
     validacion = Pedir_datos(Usuario.Nombre, "nombre de usuario", 49);
@@ -536,7 +542,7 @@ void altaUsuarios(User** Lista){
   bitacora("301", id, 0, 0);
   fclose(Archivo);
 }
-int ValidarCaracteres(char Cadena[], char Error[]){
+int ValidarCaracteres(char Cadena[], char Error[]){ // Funcion que valida el los caracteres
   int i = 0;
   int Status = 0;
   while(Cadena[i] != '\0' && Status == 0){
@@ -548,7 +554,7 @@ int ValidarCaracteres(char Cadena[], char Error[]){
   }
   return Status;
 }
-int validarNumeros(char Cadena[], char Error[]){
+int validarNumeros(char Cadena[], char Error[]){ // Funcion que valida numeros
   int i = 0;
   int Status = 0;
   while(Cadena[i] != '\0' && Status == 0){
@@ -560,7 +566,7 @@ int validarNumeros(char Cadena[], char Error[]){
   }
   return Status;
 }
-void cargarListaBiciestacion(Biciestacion** Lista){
+void cargarListaBiciestacion(Biciestacion** Lista){ // Cargamos la lista de biciestaciones
   char linea[500], Datos[6][200];
   int i, j = 0, contador = 0;
   FILE* Archivo = fopen("biciestaciones.txt", "rt");
@@ -622,7 +628,7 @@ void cargarListaBicis(Bicicleta** Lista){
       }
     }
   }
-}
+}// Funcion para cargar la lista de bicis
 void anadirBici(int id, char NumeroBici[], Bicicleta** Lista, Biciestacion** ListaBiciestaciones){
   Bicicleta* Nueva = (Bicicleta*)malloc(sizeof(Bicicleta));
   Biciestacion* aux = *ListaBiciestaciones;
@@ -663,7 +669,7 @@ void anadirBici(int id, char NumeroBici[], Bicicleta** Lista, Biciestacion** Lis
       printf("La bicicleta se ha añadido correctamente\n");
     }
   }
-}
+} // Agrega un nodo a la lista bicis
 void anadirBiciestacion(int id, char NombreGenerico[], char Calle[], char numero[], char cp[], char Ciudad[], Biciestacion** Lista){
   Biciestacion* Nueva = (Biciestacion*)malloc(sizeof(Biciestacion));
   Biciestacion* aux;
@@ -683,7 +689,7 @@ void anadirBiciestacion(int id, char NombreGenerico[], char Calle[], char numero
     }
     aux->siguiente = Nueva;
   }
-}
+}// Agrega un nodo a la lista biciestaciones
 void anadirUsuario(int id, char Nombre[], char Direccion[], char Contrasenia[], char tarjeta[], char TipoUsuario[], User** Lista){
   User* Nuevo = (User*)malloc(sizeof(User));
   User* aux;
@@ -704,7 +710,7 @@ void anadirUsuario(int id, char Nombre[], char Direccion[], char Contrasenia[], 
     aux->siguiente = Nuevo;
   }
   printf("Se ha añadido con exito el usuario\n");
-}
+}// Agrega un nodo a la lista usuarios
 void reasignarBicis(Bicicleta** ListaBicis, Biciestacion** ListaBiciestaciones){
   system("clear");
   printf("\t\tReasignar Bicis entre Biciestaciones\n\n");
@@ -736,7 +742,7 @@ void reasignarBicis(Bicicleta** ListaBicis, Biciestacion** ListaBiciestaciones){
     error[0] = '\0';
   }
   reasignar(Numero, NumBici, ListaBicis, ListaBiciestaciones);
-}
+}// Pide los datos para reasignar las bicis
 void reasignar(char Numero[],char NumBici[],Bicicleta** ListaBicis,Biciestacion** ListaBiciestaciones){
   Biciestacion* aux = *ListaBiciestaciones;
   Bicicleta* aux2 = *ListaBicis, *aux3 = *ListaBicis;
@@ -772,7 +778,7 @@ void reasignar(char Numero[],char NumBici[],Bicicleta** ListaBicis,Biciestacion*
       }
     }
   }
-}
+}// Realiza la reasignacion // Funcion para reasignar Bicicletas
 void status(Biciestacion** ListaBiciestaciones, Bicicleta** ListaBicis){
   Biciestacion* aux = *ListaBiciestaciones;
   int Numrenta = 0, lugaresDisponibles = 0;
@@ -798,7 +804,7 @@ void status(Biciestacion** ListaBiciestaciones, Bicicleta** ListaBicis){
     aux = aux->siguiente;
   }
   printf("\n\nB.D = Bicis Disponibles para Renta\nL.D = Lugares Disponible para Estacionarse\n");
-}
+}// Muestra el estatus de una biciestacion
 int obtenerNumerorentas(int numeroBiciestacion, Bicicleta** ListaBicis){
   Bicicleta* aux = *ListaBicis;
   int numeroRentas = 0;
@@ -808,7 +814,7 @@ int obtenerNumerorentas(int numeroBiciestacion, Bicicleta** ListaBicis){
     aux = aux->siguiente;
   }
   return numeroRentas;
-}
+} // Obtiene las rentas de una bicicleta
 void eliminarBiciestacion(Biciestacion** ListaBiciestaciones, Bicicleta** ListaBicis){
   system("clear");
   char numero[4], error[100];
@@ -823,7 +829,7 @@ void eliminarBiciestacion(Biciestacion** ListaBiciestaciones, Bicicleta** ListaB
     error[0] = '\0';
   }
   deleteBiciestacion(ListaBiciestaciones, ListaBicis, numero);
-}
+}// Pide datos para eliminar biciestacion
 void deleteBiciestacion(Biciestacion** ListaBiciestaciones, Bicicleta** ListaBicis, char numero[]){
   int found = 0, i = 0;
   Biciestacion* aux = *ListaBiciestaciones, *aux3 = *ListaBiciestaciones, *ant = NULL;
@@ -864,7 +870,7 @@ void deleteBiciestacion(Biciestacion** ListaBiciestaciones, Bicicleta** ListaBic
       bitacora("102", atoi(numero), 0, 0);
     }
   }
-}
+} // Elimina un nodo de la lista de biciestaciones
 void eliminarBici(Bicicleta** Lista){
   system("clear");
   char numero[4], error[100];
@@ -889,7 +895,7 @@ void eliminarBici(Bicicleta** Lista){
     deleteBici(Lista, numero);
   }else
     printf("Actualmente no hay bicicletas dadas de alta\n");
-}
+} // Pide datos para dar de baja una bici
 void deleteBici(Bicicleta** ListaBicis, char numero[]){
   int found = 0, i = 0;
   Bicicleta* aux = *ListaBicis, *aux2 = *ListaBicis, *aux3, *ant = NULL;
@@ -925,7 +931,7 @@ void deleteBici(Bicicleta** ListaBicis, char numero[]){
       bitacora("202", atoi(numero), 0, 0);
     }
   }
-}
+} // Elimina un nodo de la lista de bicis
 void eliminarUsuario(User** ListaUsuarios, Bicicleta** ListaBicis){
   system("clear");
   char numero[4], error[100];
@@ -939,7 +945,7 @@ void eliminarUsuario(User** ListaUsuarios, Bicicleta** ListaBicis){
     error[0] = '\0';
   }
   deleteUsuario(ListaUsuarios, ListaBicis, numero);
-}
+}// Pide datos para dar de baja un usuario
 void deleteUsuario(User** ListaUsuarios, Bicicleta** ListaBicis, char numero[]){
   int found = 0, i = 0;
   User* aux = *ListaUsuarios, *aux3 = *ListaUsuarios, *ant = NULL;
@@ -980,7 +986,7 @@ void deleteUsuario(User** ListaUsuarios, Bicicleta** ListaBicis, char numero[]){
       bitacora("302", atoi(numero), 0, 0);
     }
   }
-}
+}// Elimina un nodo de la lista de usuarios
 void Timestamp(char Cadena[]){
   time_t rawtime;
   struct tm *timeinfo;
@@ -988,7 +994,7 @@ void Timestamp(char Cadena[]){
   timeinfo = localtime(&rawtime);
   sprintf(Cadena, "%d%d%d-%d:%d:%d\n", timeinfo->tm_year+1900, timeinfo->tm_mon+1, timeinfo->tm_mday, timeinfo->tm_hour, timeinfo->tm_min, timeinfo->tm_sec);
   Cadena[strlen(Cadena)-1] = '\0';
-}
+} // Obtiene el Timestamp
 void pedirDatosRenta(long Usuario, Biciestacion** ListaBiciestaciones, Bicicleta** ListaBicicletas){
   system("clear");
   char numero[4], error[100];
@@ -1025,7 +1031,7 @@ void pedirDatosRenta(long Usuario, Biciestacion** ListaBiciestaciones, Bicicleta
     }else
       printf("Actualmente no hay bicicletas en el sistema\n");
   }
-}
+} // Pide datos de renta
 void rentar(Bicicleta** ListaBicicletas, char numero[], long Usuario){
   Bicicleta* aux = *ListaBicicletas;
   int found = 0;
@@ -1045,7 +1051,7 @@ void rentar(Bicicleta** ListaBicicletas, char numero[], long Usuario){
     Timestamp(aux->Timestamp);
     printf("La bicicleta esta siendo rentada apartir de ahora\n");
   }
-}
+} // Pone el estatus de una bici a rentada
 void devolverBici(long Usuario, Biciestacion** ListaBiciestaciones, Bicicleta** ListaBicis){
   Biciestacion* aux = *ListaBiciestaciones;
   Bicicleta* aux2 = *ListaBicis;
@@ -1079,7 +1085,7 @@ void devolverBici(long Usuario, Biciestacion** ListaBiciestaciones, Bicicleta** 
     devolver(Usuario, ListaBicis, ListaBiciestaciones, numero);
   }else
     printf("Actualmente usted no tiene bicis rentadas\n");
-}
+} // Pide datos para estacionar una bici
 void devolver(long Usuario, Bicicleta** ListaBicis, Biciestacion** ListaBiciestaciones, char numero[]){
   Biciestacion* aux = *ListaBiciestaciones;
   Bicicleta* aux2 = *ListaBicis;
@@ -1112,7 +1118,7 @@ void devolver(long Usuario, Bicicleta** ListaBicis, Biciestacion** ListaBiciesta
     }
     printf("Se ha devuelto de manera correcta la bicicleta\n");
   }
-}
+} // Devuelve la bici a una biciestacion
 int restarHoras(char Horainicial[]){
   int horas, minutos, segundos;
   int horasF, minutosF, segundosF, Dhoras, Dminutos;
@@ -1140,12 +1146,12 @@ int restarHoras(char Horainicial[]){
       Haymulta = 1;
   }
   return Haymulta;
-}
+} // Obtiene la diferencia de horas
 void agregarMulta(long Usuario){
   FILE* Archivo = fopen("multas.txt", "at");
   fprintf(Archivo, "%ld\n", Usuario);
   fclose(Archivo);
-}
+} // Agrega una multa
 void mostrarSaldo(long Usuario){
   FILE* Archivo = fopen("multas.txt", "rt");
   int Cuentamulta = 0;
@@ -1166,7 +1172,7 @@ void mostrarSaldo(long Usuario){
       printf("Actualmente cuentas con una multa de $%d\n", Cuentamulta);
     }
   }
-}
+} // Muestra el saldo
 void bitacora(char Accion[], int Adicional1, int Adicional2, long User){
   FILE* Archivo = fopen("bitacora.txt", "at");
   char Time[100];
@@ -1180,7 +1186,7 @@ void bitacora(char Accion[], int Adicional1, int Adicional2, long User){
       fprintf(Archivo, "%s %s %d %d\n", Time, Accion, Adicional1, Adicional2);
   }
   fclose(Archivo);
-}
+}// Funcion que imprime la bitacora
 void creditos(){
   system("clear");
     system("sleep 0.1");
@@ -1210,7 +1216,7 @@ void creditos(){
     system("sleep 0.1");
     printf("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
     system("sleep 0.1");
-}
+} // Despliega los creditos
 void ayuda(){
    system("clear");
    printf("Comandos disponibles: \n");
@@ -1218,7 +1224,7 @@ void ayuda(){
    printf(" $ bici.exe -c (Despliega los créditos de los desarrolladores del sistema.)\n");
    printf(" $ bici.exe -usu (Despliega el listado de todos los usuarios del servicio catalogados.)\n");
    printf(" $ bici.exe (Inicia sesion.)\n");
-}
+} // Despliega el menu de ayuda
 void imprimirArchivos(Biciestacion** ListaBicis, Bicicleta** ListaBicicletas, User** ListaUsuarios){
   Biciestacion* aux = *ListaBicis;
   Bicicleta* aux2 = *ListaBicicletas;
@@ -1257,5 +1263,5 @@ void imprimirArchivos(Biciestacion** ListaBicis, Bicicleta** ListaBicicletas, Us
     }
     fclose(Archivo);
   }
-}
+}// Imprime al final los archivos 
 //******************************************************************************
