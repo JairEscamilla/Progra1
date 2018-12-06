@@ -356,7 +356,7 @@ void limpiarDatos(char Datos[6][200]){
 void altaBiciestacion(Biciestacion** Lista){
   FILE* Archivo;
   Biciestacion Estacion, *auxiliar = *Lista;
-  char numero[5], numeroTotal[3], cp[5], error[50], renglon[500], basura[100];
+  char numero[4], numeroTotal[3], cp[5], error[50], renglon[500], basura[100];
   int validacion = 1, validacion2 = 1, id = 0;
   error[0] = '\0';
   numero[0] = '\0';
@@ -375,7 +375,7 @@ void altaBiciestacion(Biciestacion** Lista){
   while(Pedir_datos(Estacion.NombreGenerico, "nombre generico de biciestacion", 100));
   while(Pedir_datos(Estacion.Calle, "calle de la biciestacion", 50));
   while(validacion || validacion2){
-    validacion = Pedir_datos(numero, "numero (numeracion de la calle)", 3);
+    validacion = Pedir_datos(numero, "numero (numeracion de la calle)", 2);
     validacion2 = validarNumeros(numero, error);
     if(strlen(error) != 0)
       puts(error);
@@ -698,12 +698,15 @@ void reasignarBicis(Bicicleta** ListaBicis, Biciestacion** ListaBiciestaciones){
   Bicicleta* aux2 = *ListaBicis;
   char Numero[4], NumBici[4], error[100];
   int validacion = 1, validacion2 = 1;
+  printf("Listado de bicis:\n");
   while(aux2 != NULL){
-    printf("Numero de bici: %ld. Pertenece a biciestacion numero: %ld\n", aux2->NumeroBici, aux2->Biciestacion);
+    if(aux2->Biciestacion != 0)
+      printf("\tNumero de bici: %ld. Pertenece a biciestacion numero: %ld\n", aux2->NumeroBici, aux2->Biciestacion);
     aux2 = aux2->siguiente;
   }
+  printf("\n");
   while(validacion || validacion2){
-    validacion = Pedir_datos(Numero, "numero de bicicleta: ", 3);
+    validacion = Pedir_datos(Numero, "numero de bicicleta", 3);
     validacion2= validarNumeros(Numero, error);
     if(strlen(error) != 0)
       puts(error);
@@ -740,7 +743,7 @@ void reasignar(char Numero[],char NumBici[],Bicicleta** ListaBicis,Biciestacion*
     if(cantidadBicis >= 10){
       printf("No se puede realizar la reasignacion debido a que la biciestacion seleccionada se encuentra llena\n");
     }else{
-      while(aux3 != NULL){
+      while(aux3 != NULL && contador == 0){
         if(aux3->NumeroBici == atoi(Numero) && aux3->esrentada == 0)
           contador++;
         else
