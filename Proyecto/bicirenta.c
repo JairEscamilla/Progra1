@@ -49,7 +49,7 @@ void cargarListaBiciestacion(Biciestacion**);
 void cargarListaBicis(Bicicleta**);
 void separarListaUsuarios(int* i, int* j, int* contador, char linea[], char Datos[6][200]);
 void limpiarDatos(char Datos[6][200]);
-void MenuAdministrador(Biciestacion**, Bicicleta**, User**);
+void MenuAdministrador(Biciestacion**, Bicicleta**, User**, long);
 void MenuUsuario(Biciestacion**, Bicicleta**, User**, long);
 void altaBiciestacion(Biciestacion**);
 void altaBici(Bicicleta**, Biciestacion**);
@@ -75,6 +75,7 @@ void pedirDatosRenta(long, Biciestacion**, Bicicleta**);
 void rentar(Bicicleta**, char[], long);
 void devolverBici(long, Biciestacion**, Bicicleta**);
 void devolver(long, Bicicleta**, Biciestacion**, char[]);
+void bitacora(char[], int, int, long);
 void Timestamp(char[]);
 int restarHoras(char[]);
 void mostrarSaldo(long);
@@ -106,7 +107,8 @@ int main(int argc, char *argv[]) {
     leerListaUsuarios(&ListaUsuarios);
     if(iniciar_sesion(&TipoUsuario, Nombre, Password, ListaUsuarios, &IdUsuario)){
       if (TipoUsuario == 1) {
-        MenuAdministrador(&ListaBiciestacion, &ListaBicis, &ListaUsuarios);
+        bitacora("Login", 0, 0, IdUsuario);
+        MenuAdministrador(&ListaBiciestacion, &ListaBicis, &ListaUsuarios, IdUsuario);
       }
       if (TipoUsuario == 0) {
         MenuUsuario(&ListaBiciestacion, &ListaBicis, &ListaUsuarios, IdUsuario);
@@ -189,7 +191,7 @@ int iniciar_sesion(int* TipoUsuario, char Nombre[], char Password[], User* Lista
   }while ((aux != NULL));
   return inicio;
 }
-void MenuAdministrador(Biciestacion** ListaBiciestaciones, Bicicleta** ListaBicis, User** ListaUsuarios) {
+void MenuAdministrador(Biciestacion** ListaBiciestaciones, Bicicleta** ListaBicis, User** ListaUsuarios, long User) {
   system("clear");
   char Opcion;
   printf("Ha iniciado sesion correctamente\n\n");
@@ -231,6 +233,7 @@ void MenuAdministrador(Biciestacion** ListaBiciestaciones, Bicicleta** ListaBici
       break;
     case 'i':
       printf("Hasta pronto\nVuelva pronto\n");
+      bitacora("Logout", 0, 0, User);
       imprimirArchivos(ListaBiciestaciones, ListaBicis, ListaUsuarios);
       exit(0);
       break;
@@ -241,7 +244,7 @@ void MenuAdministrador(Biciestacion** ListaBiciestaciones, Bicicleta** ListaBici
   printf("Presiona enter para volver al menu...");
   __fpurge(stdin);
   getchar();
-  MenuAdministrador(ListaBiciestaciones, ListaBicis, ListaUsuarios);
+  MenuAdministrador(ListaBiciestaciones, ListaBicis, ListaUsuarios, User);
 }
 void MenuUsuario(Biciestacion** ListaBiciestaciones, Bicicleta** ListaBicis, User** ListaUsuarios, long Usuario){
   system("clear");
@@ -379,6 +382,8 @@ void altaBiciestacion(Biciestacion** Lista){
     error[0] = '\0';
   }
   anadirBiciestacion(id, Estacion.NombreGenerico, Estacion.Calle, numero, cp, Estacion.Ciudad, Lista);
+  printf("Se ha agregado correctamente la biciestacion\n");
+  bitacora("101", id, 0, 0);
   fclose(Archivo);
 }
 void altaBici(Bicicleta** Lista, Biciestacion** ListaBiciestaciones){
@@ -414,6 +419,7 @@ void altaBici(Bicicleta** Lista, Biciestacion** ListaBiciestaciones){
     error[0] = '\0';
   }
   anadirBici(id, NumBiciestacion, Lista, ListaBiciestaciones);
+  bitacora("202", id,  0, 0);
   fclose(Archivo);
 }
 void altaUsuarios(User** Lista){
@@ -490,6 +496,7 @@ void altaUsuarios(User** Lista){
   }
   TipoUsuario[1] = '\0';
   anadirUsuario(id, Usuario.Nombre, Usuario.Direccion, Usuario.Contrasenia, tarjeta, TipoUsuario, Lista);
+  bitacora("301", id, 0, 0);
   fclose(Archivo);
 }
 int ValidarCaracteres(char Cadena[], char Error[]){
@@ -689,6 +696,7 @@ void reasignarBicis(Bicicleta** ListaBicis, Biciestacion** ListaBiciestaciones){
     error[0] = '\0';
   }
   reasignar(Numero, NumBici, ListaBicis, ListaBiciestaciones);
+  bitacora("203", atoi(Numero), atoi(NumBici), 0);
 }
 void reasignar(char Numero[],char NumBici[],Bicicleta** ListaBicis,Biciestacion** ListaBiciestaciones){
   Biciestacion* aux = *ListaBiciestaciones;
@@ -759,6 +767,7 @@ void eliminarBiciestacion(Biciestacion** ListaBiciestaciones, Bicicleta** ListaB
   system("clear");
   char numero[4], error[100];
   int validacion = 1, validacion2 = 1;
+  long Nbitacora;
   printf("\t\tBaja de una biciestacion\n");
   while(validacion || validacion2){
     validacion = Pedir_datos(numero, "biciestacion a eliminar", 3);
@@ -806,6 +815,7 @@ void deleteBiciestacion(Biciestacion** ListaBiciestaciones, Bicicleta** ListaBic
         free(aux3);
       }
       printf("Se ha eliminado correctamente la biciestacion\n");
+      bitacora("102", atoi(numero), 0, 0);
     }
   }
 }
@@ -866,6 +876,7 @@ void deleteBici(Bicicleta** ListaBicis, char numero[]){
         free(aux2);
       }
       printf("Se ha eliminado correctamente la bicicleta\n");
+      bitacora("202", atoi(numero), 0, 0);
     }
   }
 }
@@ -920,6 +931,7 @@ void deleteUsuario(User** ListaUsuarios, Bicicleta** ListaBicis, char numero[]){
         free(aux3);
       }
       printf("Se ha eliminado correctamente el usuario seleccionado\n");
+      bitacora("302", atoi(numero), 0, 0);
     }
   }
 }
@@ -1107,6 +1119,20 @@ void mostrarSaldo(long Usuario){
       printf("Actualmente cuentas con una multa de $%d\n", Cuentamulta);
     }
   }
+}
+void bitacora(char Accion[], int Adicional1, int Adicional2, long User){
+  FILE* Archivo = fopen("bitacora.txt", "at");
+  char Time[100];
+  Timestamp(Time);
+  if(strcmp(Accion, "Login") == 0 || strcmp(Accion, "Logout") == 0){
+    fprintf(Archivo, "%s %s %ld\n", Time, Accion, User);
+  }else{
+    if(strcmp(Accion, "203") != 0)
+      fprintf(Archivo, "%s %s %d\n", Time, Accion, Adicional1);
+    else
+      fprintf(Archivo, "%s %s %d %d\n", Time, Accion, Adicional1, Adicional2);
+  }
+  fclose(Archivo);
 }
 void imprimirArchivos(Biciestacion** ListaBicis, Bicicleta** ListaBicicletas, User** ListaUsuarios){
   Biciestacion* aux = *ListaBicis;
