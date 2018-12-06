@@ -82,7 +82,7 @@ void mostrarSaldo(long);
 void agregarMulta(long);
 void creditos();
 void ayuda();
-void liberarMemoria(User**);
+void liberarMemoria(User**, Bicicleta**, Biciestacion**);
 //******************************************************************************
 
 
@@ -96,6 +96,7 @@ int main(int argc, char *argv[]) {
   User* ListaUsuarios = NULL;
   Biciestacion* ListaBiciestacion = NULL;
   Bicicleta* ListaBicis = NULL;
+  validar_archivo_login();
   cargarListaBiciestacion(&ListaBiciestacion);
   cargarListaBicis(&ListaBicis);
   leerListaUsuarios(&ListaUsuarios);
@@ -117,7 +118,6 @@ int main(int argc, char *argv[]) {
     }else
       printf("Solo puede introducir un parametro!\n");
   }else{
-    validar_archivo_login();
     system("clear");
     while(Pedir_datos(Nombre, "nombre", 50));
     system("clear");
@@ -135,7 +135,7 @@ int main(int argc, char *argv[]) {
       printf("Fallo en la autenticacion\n");
   }
 
-  liberarMemoria(&ListaUsuarios);
+  liberarMemoria(&ListaUsuarios, &ListaBicis, &ListaBiciestacion);
   return 0;
 }
 //******************************************************************************
@@ -180,11 +180,24 @@ int Pedir_datos(char Dato[], char NombreDato[], int longitud){
   Dato[i] = '\0';
   return status;
 }
-void liberarMemoria(User** Lista){
+void liberarMemoria(User** Lista, Bicicleta** Lista2, Biciestacion** Lista3){
+  User* Proximo;
+  Bicicleta* Proximo2;
+  Biciestacion* Proximo3;
   while (*Lista !=  NULL) {
-    User* Proximo = (*Lista)->siguiente;
+    Proximo = (*Lista)->siguiente;
     free(*Lista);
     *Lista = Proximo;
+  }
+  while (*Lista2 !=  NULL) {
+    Proximo2 = (*Lista2)->siguiente;
+    free(*Lista2);
+    *Lista2 = Proximo2;
+  }
+  while (*Lista3 !=  NULL) {
+    Proximo3 = (*Lista3)->siguiente;
+    free(*Lista3);
+    *Lista3 = Proximo3;
   }
 }
 void MostrarLista(User* Lista){
@@ -1055,8 +1068,9 @@ void devolverBici(long Usuario, Biciestacion** ListaBiciestaciones, Bicicleta** 
         printf("N. biciestacion: %ld-> Nombre biciestacion: %s-> Lugares disponibles: %d\n", aux->NumBiciestacion, aux->NombreGenerico, NumeroD);
       aux = aux->siguiente;
     }
+    printf("\n");
     while(validacion || validacion2){
-      validacion = Pedir_datos(numero, "biciestacion donde se desea devolver: ", 3);
+      validacion = Pedir_datos(numero, "biciestacion donde se desea devolver", 3);
       validacion2 = validarNumeros(numero, error);
       if(strlen(error) != 0)
         puts(error);
@@ -1210,22 +1224,38 @@ void imprimirArchivos(Biciestacion** ListaBicis, Bicicleta** ListaBicicletas, Us
   Bicicleta* aux2 = *ListaBicicletas;
   User* aux3 = *ListaUsuarios;
   FILE* Archivo = fopen("biciestaciones.txt", "wt");
-  while (aux != NULL) {
-    fprintf(Archivo, "%ld/%s/%s/%d/%s/%s/\n", aux->NumBiciestacion, aux->NombreGenerico, aux->Calle, aux->Numero, aux->CP, aux->Ciudad);
-    aux = aux->siguiente;
+  if(*ListaBicis == NULL){
+    fclose(Archivo);
+    remove("biciestaciones.txt");
+  }else{
+    while (aux != NULL) {
+      fprintf(Archivo, "%ld/%s/%s/%d/%s/%s/\n", aux->NumBiciestacion, aux->NombreGenerico, aux->Calle, aux->Numero, aux->CP, aux->Ciudad);
+      aux = aux->siguiente;
+    }
+    fclose(Archivo);
   }
-  fclose(Archivo);
+
   Archivo = fopen("bicis.txt", "wt");
-  while(aux2 != NULL){
-    fprintf(Archivo, "%ld/%ld/%ld/%s/%d/%ld/\n", aux2->NumeroBici, aux2->Biciestacion, aux2->rentas, aux2->Timestamp, aux2->esrentada, aux2->esrentadapor);
-    aux2 = aux2->siguiente;
+  if(*ListaBicicletas == NULL){
+    fclose(Archivo);
+    remove("bicis.txt");
+  }else{
+    while(aux2 != NULL){
+      fprintf(Archivo, "%ld/%ld/%ld/%s/%d/%ld/\n", aux2->NumeroBici, aux2->Biciestacion, aux2->rentas, aux2->Timestamp, aux2->esrentada, aux2->esrentadapor);
+      aux2 = aux2->siguiente;
+    }
+    fclose(Archivo);
   }
-  fclose(Archivo);
   Archivo = fopen("login.txt", "wt");
-  while (aux3 != NULL) {
-    fprintf(Archivo, "%s/%s/%s/%s/%ld/%d/\n", aux3->Nombre, aux3->Direccion, aux3->Contrasenia, aux3->TarjetaCredito, aux3->UserNumber, aux3->Flag);
-    aux3 = aux3->siguiente;
+  if(*ListaUsuarios == NULL){
+    fclose(Archivo);
+    remove("login.txt");
+  }else{
+    while (aux3 != NULL) {
+      fprintf(Archivo, "%s/%s/%s/%s/%ld/%d/\n", aux3->Nombre, aux3->Direccion, aux3->Contrasenia, aux3->TarjetaCredito, aux3->UserNumber, aux3->Flag);
+      aux3 = aux3->siguiente;
+    }
+    fclose(Archivo);
   }
-  fclose(Archivo);
 }
 //******************************************************************************
